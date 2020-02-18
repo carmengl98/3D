@@ -121,16 +121,16 @@ haciendo click en canvas</title>
       var pink = [1.0, 0.0, 1.0, 1.0];
       var white = [1.0, 1.0, 1.0, 1.0];
       // Store the coordinates to g_points array
-      if ((x>= 0.0 && x< 0.7) && (y>0.0 && y< 0.7)) {
+      if ((x>= 0.0 && x< 0.7) && (y>=0.0 && y< 0.7)) {
         size.push(10.0);
         colors.push(red);  // Red
-      } else if ((x> 0.0 && x< 0.7) && (y< 0.0 && y> -0.7)) {
+      } else if ((x>= 0.0 && x< 0.7) && (y< 0.0 && y>= -0.7)) {
         size.push(10.0);
         colors.push(green);  // Green
-      } else if ((x< 0.0 && x> -0.7) && (y> 0.0 && y< 0.7)) {
+      } else if ((x< 0.0 && x>= -0.7) && (y>= 0.0 && y< 0.7)) {
         size.push(10.0);
         colors.push(pink);  // rosa
-      } else if ((x< 0.0 && x> -0.7) && (y<0.0 && y> -0.7)) {
+      } else if ((x< 0.0 && x>= -0.7) && (y<0.0 && y>= -0.7)) {
         size.push(10.0);
         colors.push(blue);  // azul
       }else {
