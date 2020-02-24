@@ -42,24 +42,6 @@
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 18);
 
-      function drawScene() {
-        // Clear canvas
-
-        var positionx = Math.sin(count);
-        var positiony = Math.sin(count);
-
-        var matrix = mat4.fromTranslation(mat4.create(), [positionx, positiony, 0.0]);
-
-        // Set uniform value (u_Matrix) in vertex shader
-        var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
-        gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
-        // Draw
-
-        // Call drawScene again in the next browser repaint
-        count += 0.01;
-        requestAnimationFrame(drawScene);
-      }
-
       function initVertexBuffers(gl) {
             //(x,y,z)
             var vertices = [
