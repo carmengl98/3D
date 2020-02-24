@@ -50,16 +50,57 @@
       function drawScene() {
         // Clear canvas
         gl.clear(gl.COLOR_BUFFER_BIT);
-        var positionx = Math.sin(count);
-        var positiony = Math.sin(count);
+        var position = Math.abs(Math.sin(count));
 
-        var matrix = mat4.fromTranslation(mat4.create(), [positionx, positiony, 0.0]);
-
+        // Triangulo 1
+        var matrix = mat4.fromTranslation(mat4.create(), [position, position, 0.0]);
         // Set uniform value (u_Matrix) in vertex shader
         var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
         gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
-        // Draw
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 18);
+        // Dibujamos el rectangulo con las transformaciones correspondientes.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0*2);//????????????
+
+        // Triangulo 2
+        var matrix = mat4.fromTranslation(mat4.create(), [0.0, position, 0.0]);
+        // Set uniform value (u_Matrix) in vertex shader
+        var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
+        gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
+        // Dibujamos el rectangulo con las transformaciones correspondientes.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 3*2);
+
+        // Triangulo 3
+        var matrix = mat4.fromTranslation(mat4.create(), [-position, position, 0.0]);
+        // Set uniform value (u_Matrix) in vertex shader
+        var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
+        gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
+        // Dibujamos el rectangulo con las transformaciones correspondientes.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 6*2);
+
+        // Triangulo 4
+        var matrix = mat4.fromTranslation(mat4.create(), [-position, -position, 0.0]);
+        // Set uniform value (u_Matrix) in vertex shader
+        var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
+        gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
+        // Dibujamos el rectangulo con las transformaciones correspondientes.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 9*2);
+
+        // Triangulo 5
+        var matrix = mat4.fromTranslation(mat4.create(), [0.0, -position, 0.0]);
+        // Set uniform value (u_Matrix) in vertex shader
+        var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
+        gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
+        // Dibujamos el rectangulo con las transformaciones correspondientes.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 12*2);
+
+        // Triangulo 6
+        var matrix = mat4.fromTranslation(mat4.create(), [position, -position, 0.0]);
+        // Set uniform value (u_Matrix) in vertex shader
+        var mvMatrixUniform = gl.getUniformLocation(gl.program, "u_Matrix");
+        gl.uniformMatrix4fv(mvMatrixUniform, false, matrix);
+        // Dibujamos el rectangulo con las transformaciones correspondientes.
+        gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 15*2);
+
+
         // Call drawScene again in the next browser repaint
         count += 0.01;
         requestAnimationFrame(drawScene);
@@ -68,27 +109,36 @@
       function initVertexBuffers(gl) {
             //(x,y,z)
             var vertices = [
-              0.0, 0.0, 0.0, -0.25, -0.5, 0.0, 0.25, -0.5, 0.0,  //Triángulo 1
-              0.0, 0.0, 0.0, 0.25, -0.5, 0.0, 0.5, 0.0, 0.0,    //Triángulo 2
-              0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.25, 0.5, 0.0,     //Triángulo 3
-              0.0, 0.0, 0.0, 0.25, 0.5, 0.0, -0.25, 0.5, 0.0,    //Triángulo 4
-              0.0, 0.0, 0.0, -0.25, 0.5, 0.0, -0.5, 0.0, 0.0,    //Triángulo 5
-              0.0, 0.0, 0.0, -0.5, 0.0, 0.0, -0.25, -0.5, 0.0    //Triángulo 6
+            0.0, 0.0, 0.0, // Vertice 0 (centro del hexagono)
+            0.5, 0.0, 0.0, // Vertice 1
+            0.25, 0.5, 0.0, // vertice 2
+            -0.25, 0.5, 0.0, // vertice 3
+            -0.5, 0.0, 0.0, // vertice 4
+            -0.25, -0.5, 0.0, // vertice 5
+            0.25, -0.5, 0.0 // vertice 6
             ];
 
             var colors = new Float32Array([
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0, //rojo
+            0.0, 1.0, 0.0, //verde
+            0.0, 1.0, 0.0, //verde
+            0.0, 1.0, 0.0, //verde
+            0.0, 1.0, 0.0, //verde
+            0.0, 1.0, 0.0, //verde
             ]);
+
+            //?????????????
+            // Creamos el buffer.
+            var vertexBuffer = gl.createBuffer();
+            if(!vertexBuffer){
+              console.log('Failed to create the buffer object');
+              return -1;
+            }
 
             // Create a buffer object
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
+            // Se pregunta a WebGL dónde están los datos.(Están en el codigo JS del vertex shader).
             // Assign the vertices in buffer object to a_Position variable
             var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
             gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
@@ -101,6 +151,19 @@
             var a_Color = gl.getAttribLocation(gl.program, 'a_Color');
             gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(a_Color);
+
+            // Indices
+            var indices = new Uint16Array([
+            0, 1, 2,   //indice 1
+            0, 2, 3,   //indice 2
+            0, 3, 4,   //indice 3
+            0, 4, 5,   //indice 4
+            0, 5, 6,   //indice 5
+            0, 6, 1,   //indice 6
+            ]);
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
           }
 
