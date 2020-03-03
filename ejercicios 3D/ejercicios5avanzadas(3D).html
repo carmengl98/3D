@@ -85,9 +85,9 @@
             // Draw
             var primitiveValue = document.querySelector('input[name="primitive"]:checked').value;
             if (primitiveValue == "triangles"){
-              gl.drawElements(gl.TRIANGLES, 6 * 2 * 3, gl.UNSIGNED_SHORT, 0);
+              gl.drawElements(gl.TRIANGLES, (6 * 2 * 3)+ (3 * 2 * 3), gl.UNSIGNED_SHORT, 0);
             }else if (primitiveValue == "lines"){
-              gl.drawElements(gl.LINES, 6 * 2 * 3, gl.UNSIGNED_SHORT, 0);
+              gl.drawElements(gl.LINES, (6 * 2 * 3) + (3 * 2 * 3), gl.UNSIGNED_SHORT, 0);
 
             }
 
@@ -103,57 +103,47 @@
             // Vertexes and colors  (X, Y, Z, R, G, B)
             var vertexesAndColors = [
                	// Back - Yellow
-                -0.5, -0.5, -0.5,   1, 1, 0, // v0
-                0.5, -0.5, -0.5,    1, 1, 0, // v1
-                0.5, 0.5, -0.5,     1, 1, 0, // v2
-                -0.5, 0.5, -0.5,    1, 1, 0, // v3
-				// Front - Blue
-                -0.5, -0.5, 0.5,    0, 0, 1, // v4
-                0.5, -0.5, 0.5,     0, 0, 1, // v5
-                0.5, 0.5, 0.5,      0, 0, 1, // v6
-                -0.5, 0.5, 0.5,     0, 0, 1, // v7
-				// Left – Light Blue
-                -0.5, -0.5, -0.5,   0, 1, 1, // v8
-                -0.5, 0.5, -0.5,    0, 1, 1, // v9
-                -0.5, 0.5, 0.5,     0, 1, 1, // v10
-                -0.5, -0.5, 0.5,    0, 1, 1, // v11
-				// Right - Red
-                0.5, -0.5, -0.5,    1, 0, 0, // v12
-                0.5, 0.5, -0.5,     1, 0, 0, // v13
-                0.5, 0.5, 0.5,      1, 0, 0, // v14
-                0.5, -0.5, 0.5,     1, 0, 0, // v15
-				// Bottom - Pink
-                -0.5, -0.5, -0.5,   1, 0, 1, // v16
-                -0.5, -0.5, 0.5,    1, 0, 1, // v17
-                0.5, -0.5, 0.5,     1, 0, 1, // v18
-                0.5, -0.5, -0.5,    1, 0, 1, // v19
+                0.0, 0.0, -0.5,   1, 1, 0, // v0
+                0.5, 0.0, -0.5,    1, 1, 0, // v1
+                0.25, 0.5, -0.5,     1, 1, 0, // v2
+                -0.25, 0.5, -0.5,    1, 1, 0, // v3
+                -0.5, 0.0, -0.5,     1, 1, 0, // v4
+                -0.25, -0.5, -0.5,   1, 1, 0, // v5
+                0.25, -0.5, -0.5,     1, 1, 0, // v6
+
 				// Top - Green
-                -0.5, 0.5, -0.5,    0, 1, 0, // v20
-                -0.5, 0.5, 0.5,     0, 1, 0, // v21
-                0.5, 0.5, 0.5,      0, 1, 0, // v22
-                0.5, 0.5, -0.5,     0, 1, 0  // v23
+                0.0, 0.0, 0.5,   0, 1, 0, // v7
+                0.5, 0.0, 0.5,    0, 1, 0, // v8
+                0.25, 0.5, 0.5,     0, 1, 0, // v9
+                -0.25, 0.5, 0.5,    0, 1, 0, // v10
+                -0.5, 0.0, 0.5,     0, 1, 0, // v11
+                -0.25, -0.5, 0.5,   0, 1, 0, // v12
+                0.25, -0.5, 0.5,     0, 1, 0, // v13
             ];
 
-            // Indexes (for drawing squares using triangles)
-            var indexes = [
-                0, 1, 2,
-                0, 2, 3,
 
-                4, 5, 6,
-                4, 6, 7,
+            // Indices
+            var indices = new Uint16Array([
+            0, 1, 2,   //indice 1
+            0, 2, 3,   //indice 2
+            0, 3, 4,   //indice 3
+            0, 4, 5,   //indice 4
+            0, 5, 6,   //indice 5
+            0, 6, 1,   //indice 6
+            7, 8, 9,   //indice 1
+            7, 9, 10,   //indice 2
+            7, 10, 11,   //indice 3
+            7, 11, 12,   //indice 4
+            7, 12, 13,   //indice 5
+            7, 13, 8,   //indice 6
+            1, 2, 8,   //indice 7 (para el rectangulo)
+            3, 4, 10,  //indice 8
+            5, 6, 12,  //indice 9
+            8, 9, 2,   //indice 10
+            10, 11, 4, //indice 11
+            12, 13, 6, //indice 12          
 
-                8, 9, 10,
-                8, 10, 11,
-
-                12, 13, 14,
-                12, 14, 15,
-
-                16, 17, 18,
-                16, 18, 19,
-
-                20, 21, 22,
-                20, 22, 23
-            ];
+            ]);
 
             // Write a_Position and a_Color using gl.ARRAY_BUFFER
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
@@ -169,7 +159,7 @@
 
             // Write indexes in gl.ELEMENT_ARRAY_BUFFER
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexes), gl.STATIC_DRAW);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
         }
 
         function initProjection(gl, canvas) {
