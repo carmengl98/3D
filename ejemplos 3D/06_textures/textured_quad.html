@@ -18,6 +18,7 @@
 <script id="shaderFs" type="x-shader/x-fragment">
     precision highp float;
     precision mediump float;
+    //variables que se usan para configurar la textura(textura 2D)
     uniform sampler2D u_Sampler;
     varying vec2 v_TexCoord;
     void main(void) {
@@ -51,13 +52,16 @@
         // Set clear color (black)
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-        // Init textures
+        // Init textures y dibujará la escena
         initTexturesAndDraw(gl);
     }
 
     function initTexturesAndDraw(gl) {
+        //creo mi variable imagen
         var image = new Image();
+        //ruta de mi imagen
         image.src = 'sky.jpg';
+        //funciones para cargar la textura y dibujar la escena
         image.onload = function () {
             loadTexture(gl, "u_Sampler", image, 0, true);
             drawScene(gl);
@@ -65,21 +69,28 @@
     }
 
     function loadTexture(gl, samplerUniform, image, unitNumber, flip) {
-        // Flip the image's y axis
+        // Flip the image's y axis (porque los ejes están invertidos)
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flip);
 
         // Activate and configure texture
+        //activa la textura x
         gl.activeTexture(gl.TEXTURE0 + unitNumber);
+        //habilita la textura según su tipo
         gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+        //indica la forma de mapeo
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        //Asigna la imagen JavaScript a la textura creada
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
         // Set texture to the sampler
+        // las variablesa las que serán asignadas los shaders, debemos preguntar
+        // al fragment shader dónde se encuentra y después asignarla.
         var fragmentSamplerUniform = gl.getUniformLocation(gl.program, samplerUniform);
         gl.uniform1i(fragmentSamplerUniform, unitNumber);
     }
 
     function drawScene(gl) {
+        //colorea el canvas
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -99,11 +110,11 @@
 
         var vertexPositionAttribute = gl.getAttribLocation(gl.program, "a_Position");
         gl.enableVertexAttribArray(vertexPositionAttribute);
-        gl.vertexAttribPointer(vertexPositionAttribute, 2, gl.FLOAT, false, 4 * 4, 0);
+        gl.vertexAttribPointer(vertexPositionAttribute, 2, gl.FLOAT, false, 4 * 4, 0); ////numeros
 
         var vertexTextureAttribute = gl.getAttribLocation(gl.program, "a_TexCoord");
         gl.enableVertexAttribArray(vertexTextureAttribute);
-        gl.vertexAttribPointer(vertexTextureAttribute, 2, gl.FLOAT, false, 4 * 4, 4 * 2);
+        gl.vertexAttribPointer(vertexTextureAttribute, 2, gl.FLOAT, false, 4 * 4, 4 * 2); ////numeros
     }
 
     function initShaders(gl, vs_source, fs_source) {

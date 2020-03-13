@@ -7,6 +7,8 @@
 
 <script id="shaderVs" type="x-shader/x-vertex">
     attribute vec4 a_Position;
+    // se reciben las coordenadas de la textura mediante laa variable
+    // a_TexCoord de tipo attribute.
     attribute vec2 a_TexCoord;
     varying vec2 v_TexCoord;
     void main(void) {
@@ -16,12 +18,17 @@
 </script>
 
 <script id="shaderFs" type="x-shader/x-fragment">
+    //no se para que es ??
     precision highp float;
     precision mediump float;
+    //variables que se usan para configurar la textura(textura 2D)
+    //cuando tenemos dos sampler tendremos dos texturas
     uniform sampler2D u_Sampler0;
     uniform sampler2D u_Sampler1;
     varying vec2 v_TexCoord;
     void main(void) {
+      //vec4 texture2D recupera el color del texel usando las coordenadas
+      //calculadas por el vértice (v_TexCoord)
         vec4 color0 = texture2D(u_Sampler0, v_TexCoord);
         vec4 color1 = texture2D(u_Sampler1, v_TexCoord);
         gl_FragColor = color0 * color1;
@@ -54,26 +61,31 @@
         // Set clear color (black)
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-        // Init textures
+        // Init textures y dibujará la escena
         initTexturesAndDraw(gl);
     }
 
     function initTexturesAndDraw(gl) {
+        //creamos la variable imagen0; la que vamos a usar todo el rato
         var image0 = new Image();
+        //ruta de la imagen0
         image0.src = 'sky.jpg';
+        //creamos la variable imagen2; la que vamos a usar todo el rato
         var image1 = new Image();
+        //ruta de la imagen1
         image1.src = 'circle.gif';
+        //funciones para cargar las texturas y dibujar las escenas
         image0.onload = function () {
-            loadTexture(gl, "u_Sampler0", image0, 0, true);
+            loadTexture(gl, "u_Sampler0", image0, 0, true); //carga vertex
             image1.onload = function () {
-                loadTexture(gl, "u_Sampler1", image1, 1, true);
-                drawScene(gl);
+                loadTexture(gl, "u_Sampler1", image1, 1, true); //carga vertex
+                drawScene(gl); // dibuja los vertex
             };
         };
     }
 
     function loadTexture(gl, samplerUniform, image, unitNumber, flip) {
-        // Flip the image's y axis
+        // Flip the image's y axis (porque los ejes están invertidos)
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flip);
 
         // Activate and configure texture
@@ -88,29 +100,38 @@
     }
 
     function drawScene(gl) {
+       //colorea el canvas
         gl.clear(gl.COLOR_BUFFER_BIT);
-
+        //invocamos el dibujo del vertice para pintar?????
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
     function initVertexBuffers(gl) {
         // Vertices (x, y) and texture coordinates (s, t)
+        //las coordenadas de las texturas suelen vaiar entre 0 y 1.
         var verticesAndTextures = [
             -0.5, 0.5, 0.0, 1.0, // top-left image corner
             -0.5, -0.5, 0.0, 0.0, // bottom-left image corner
             0.5, 0.5, 1.0, 1.0, // top-right image corner
             0.5, -0.5, 1.0, 0.0, // bottom-right image corner
         ];
-
+        // crea un buffer donde guardaremos toda la información
         gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        //¿guarda en el bufffer los verticesa y las texturas
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verticesAndTextures), gl.STATIC_DRAW);
 
+        //el vertex pide a la GPU la variable a_Position
         var vertexPositionAttribute = gl.getAttribLocation(gl.program, "a_Position");
+        // habilitamos el atributo para poder usarlo
         gl.enableVertexAttribArray(vertexPositionAttribute);
+        //asigna el objeto de buffer a la variable atributo especificada
         gl.vertexAttribPointer(vertexPositionAttribute, 2, gl.FLOAT, false, 4 * 4, 0);
 
+        //el vertex pide a la GPU la variable a_TexCoord
         var vertexTextureAttribute = gl.getAttribLocation(gl.program, "a_TexCoord");
+        // habilitamos el atributo para poder usarlo
         gl.enableVertexAttribArray(vertexTextureAttribute);
+        //asigna el objeto de buffer a la variable atributo especificada
         gl.vertexAttribPointer(vertexTextureAttribute, 2, gl.FLOAT, false, 4 * 4, 4 * 2);
     }
 
