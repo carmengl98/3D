@@ -3,19 +3,23 @@
 
 <head>
     <title>WebGL textures: cube</title>
-
+    //no recuerdo
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
 
     <script id="shaderVs" type="x-shader/x-vertex">
         attribute vec4 a_Position;
+        //Se reciben las coordenadas de la textura mediante la variable
+        //a_TexCoord de tipo attribute
 	      attribute vec2 a_TexCoord;
         varying vec2 v_TexCoord;
 
-        uniform mat4 u_pMatrix;
-        uniform mat4 u_vMatrix;
-        uniform mat4 u_mvMatrix;
+        uniform mat4 u_pMatrix; //matriz proyeccion
+        uniform mat4 u_vMatrix; //matriz vista(cámara)
+        uniform mat4 u_mvMatrix; //matriz de transformacion
         varying highp vec4 v_Color;
         void main() {
+            //multiplicamos las tres matrices y la a_Position
+            // para obtener la definicion de los vertex
             gl_Position = u_pMatrix * u_vMatrix * u_mvMatrix * a_Position;
             v_TexCoord = a_TexCoord;
         }
@@ -24,6 +28,8 @@
     <script id="shaderFs" type="x-shader/x-fragment">
         precision highp float;
         precision mediump float;
+        //La textura se configura desde JavaScript (variable u_Sampler) y se pocesa
+        //en el fragment shader usando las coordenadas calculas por vértice (v_TexCoord)
         uniform sampler2D u_Sampler;
         varying vec2 v_TexCoord;
 
@@ -33,6 +39,7 @@
     </script>
 
     <script>
+        //variables globales
         var gl;
         var count = 0.0;
 
@@ -61,7 +68,7 @@
             // Set clear canvas color
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-            // Habilitamos la superficie oculta
+            // Habilitamos la superficie oculta(¿¿¿¿PARAAAA?????)
             gl.enable(gl.DEPTH_TEST);
 
             // Init textures y dibuja las escena
@@ -69,7 +76,7 @@
         }
 
         function initVertexShader(gl) {
-            // Vertexes and texture coordinates (x,y,z,s,t)  
+            // Vertexes and texture coordinates (x,y,z,s,t)
             var vertexesAndTextures = [
                 -0.5, -0.5, -0.5, 0.0, 0.0,
                 0.5, -0.5, -0.5, 1.0, 0.0,
@@ -140,7 +147,7 @@
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexes), gl.STATIC_DRAW);
         }
 
-        function initProjection(gl, canvas) {
+        function initProjection(gl, canvas) { //pensaaarrrrrr!!!!
             // Write u_pMatrix
             var pMatrixUniform = gl.getUniformLocation(gl.program, "u_pMatrix");
             var ratio = canvas.width / canvas.height;
@@ -175,6 +182,15 @@
             // Set texture to the sampler
             var fragmentSamplerUniform = gl.getUniformLocation(gl.program, samplerUniform);
             gl.uniform1i(fragmentSamplerUniform, unitNumber);
+
+            //TIPOS DE MAPEO
+            //gl.TEXTURE_MAG_FILTER :Mapear una textura en una figura con un área mayor
+            //gl.TEXTURE_MIN_FILTER: Mapear una textura en una figura con un área menor
+            //gl.TEXTURE_WRAP_S: Mapea la textura en el eje t (rellena la regiones
+            //arriba y abajo)
+            //gl.TEXTURE_WRAP_T: Mapea la textura en el eje s (rellena la regiones
+            //a la izquierda y a la derecha)
+
         }
 
         function drawScene() {
