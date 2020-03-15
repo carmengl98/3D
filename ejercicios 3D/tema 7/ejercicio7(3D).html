@@ -153,7 +153,7 @@
 
         function initTexturesAndDraw(gl) {
             var image = new Image();
-            image.src = 'earth.png';
+            image.src = 'deathstar.png';
             image.onload = function () {
                 loadTexture(gl, "u_Sampler", image, 0, false);
                 drawScene();
@@ -226,6 +226,11 @@
 
 <body onload="init()">
     <canvas id="myCanvas" width="640" height="480"></canvas>
+    <b>Light direction</b>
+    <br>
+    <input type="range" id="x" min="-20" max="20" value="2" step="1">X<br>
+    <input type="range" id="y" min="-20" max="20" value="-8" step="1">Y<br>
+    <input type="range" id="z" min="-20" max="20" value="-8" step="1">Z<br>
 </body>
 
 </html>
