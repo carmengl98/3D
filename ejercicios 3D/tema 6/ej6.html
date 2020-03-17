@@ -42,15 +42,15 @@
     <script>
 
         var gl;
-        var count = 0.0;
         var z = -3;
         var ejx = 0;
         var ejy = 0;
         var up = 1;
-        var a = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
-        var d = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0];
-        var i = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
-
+        var vector = [];
+        var flecha_up = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+        var flecha_right = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0];
+        var flecha_left = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+        var flecha_down = [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
         function init() {
             // Get canvas object from the DOM
             var canvas = document.getElementById("myCanvas");
@@ -93,21 +93,24 @@
                var step = new Number(document.getElementById("step").value);
                switch (ev.keyCode) {
                  case 37: // Left
-                   ejy -= step;
+                   ejy += step;
                    ejx = 0;
-
+                   vector = flecha_left;
                  break;
                  case 39: // Right
-                  ejy += step;
+                  ejy -= step;
                   ejx = 0;
+                  vector = flecha_right;
                  break;
                  case 38: // Up
                    ejx -= step;
                    ejy = 0;
+                   vector = flecha_up;
                  break;
                  case 40: // Down
                    ejx += step;
                    ejy = 0;
+                   vector = flecha_down;
                  break;
                  case 33: // PageUp
                    up += step;
@@ -124,40 +127,40 @@
             // Vertexes and texture coordinates (x,y,z,s,t)
             var vertexesAndTextures = [
                 //arriba
-                -0.5, -0.5, -0.5, 0.0, 0.0,
-                0.5, -0.5, -0.5, 1.0, 0.0,
-                0.5, 0.5, -0.5, 1.0, 1.0,
-                -0.5, 0.5, -0.5, 0.0, 1.0,
+                -0.5, -0.5, -0.5, vector[0], vector[1],
+                0.5, -0.5, -0.5, vector[2], vector[3],
+                0.5, 0.5, -0.5, vector[4], vector[5],
+                -0.5, 0.5, -0.5, vector[6], vector[7],
 
                 //derecha
-                -0.5, -0.5, 0.5, 0.0, 1.0,
-                0.5, -0.5, 0.5, 0.0, 0.0,
-                0.5, 0.5, 0.5, 1.0, 0.0,
-                -0.5, 0.5, 0.5, 1.0, 1.0,
+                -0.5, -0.5, 0.5, vector[0], vector[1],
+                0.5, -0.5, 0.5, vector[2], vector[3],
+                0.5, 0.5, 0.5, vector[4], vector[5],
+                -0.5, 0.5, 0.5, vector[6], vector[7],
 
                 //izquierda
-                -0.5, -0.5, -0.5, 0.0, 0.0,
-                -0.5, 0.5, -0.5, 0.0, 1.0,
-                -0.5, 0.5, 0.5, 1.0, 1.0,
-                -0.5, -0.5, 0.5, 1.0, 0.0,
+                -0.5, -0.5, -0.5, vector[0], vector[1],
+                -0.5, 0.5, -0.5, vector[2], vector[3],
+                -0.5, 0.5, 0.5, vector[4], vector[5],
+                -0.5, -0.5, 0.5, vector[6], vector[7],
 
                 //izquierda
-                0.5, -0.5, -0.5, 0.0, 0.0,
-                0.5, 0.5, -0.5, 0.0, 1.0,
-                0.5, 0.5, 0.5, 1.0, 1.0,
-                0.5, -0.5, 0.5, 1.0, 0.0,
+                0.5, -0.5, -0.5, vector[0], vector[1],
+                0.5, 0.5, -0.5, vector[2], vector[3],
+                0.5, 0.5, 0.5, vector[4], vector[5],
+                0.5, -0.5, 0.5, vector[6], vector[7],
 
                 //izquierda
-                -0.5, -0.5, -0.5, 0.0, 0.0,
-                -0.5, -0.5, 0.5, 0.0, 1.0,
-                0.5, -0.5, 0.5, 1.0, 1.0,
-                0.5, -0.5, -0.5, 1.0, 0.0,
+                -0.5, -0.5, -0.5, vector[0], vector[1],
+                -0.5, -0.5, 0.5, vector[2], vector[3],
+                0.5, -0.5, 0.5, vector[4], vector[5],
+                0.5, -0.5, -0.5, vector[6], vector[7],
 
                 //derecha
-                -0.5, 0.5, -0.5, 0.0, 1.0,
-                -0.5, 0.5, 0.5, 0.0, 0.0,
-                0.5, 0.5, 0.5, 1.0, 0.0,
-                0.5, 0.5, -0.5, 1.0, 1.0,
+                -0.5, 0.5, -0.5, vector[0], vector[1],
+                -0.5, 0.5, 0.5, vector[2], vector[3],
+                0.5, 0.5, 0.5, vector[4], vector[5],
+                0.5, 0.5, -0.5, vector[6], vector[7],
             ];
 
             // Indexes
