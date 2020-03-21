@@ -51,6 +51,7 @@
         var flecha_right = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0];
         var flecha_left = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
         var flecha_down = [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+
         function init() {
             // Get canvas object from the DOM
             var canvas = document.getElementById("myCanvas");
@@ -94,26 +95,23 @@
                switch (ev.keyCode) {
                  case 37: // Left
                    ejy += step;
-                   ejx = 0;
                    vector = flecha_left;
                  break;
                  case 39: // Right
                   ejy -= step;
-                  ejx = 0;
                   vector = flecha_right;
                  break;
                  case 38: // Up
                    ejx -= step;
-                   ejy = 0;
                    vector = flecha_up;
                  break;
                  case 40: // Down
                    ejx += step;
-                   ejy = 0;
                    vector = flecha_down;
                  break;
                  case 33: // PageUp
                    up += step;
+                   console.log(up);
                  break;
                  case 34: // PageDown
                    up -= step;
@@ -125,18 +123,23 @@
 
         function initVertexShader(gl) {
             // Vertexes and texture coordinates (x,y,z,s,t)
+            //
+            // var flecha_up = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+            // var flecha_right = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0];
+            // var flecha_left = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+            // var flecha_down = [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
             var vertexesAndTextures = [
-                //arriba
+                //bajo
                 -0.5, -0.5, -0.5, vector[0], vector[1],
                 0.5, -0.5, -0.5, vector[2], vector[3],
                 0.5, 0.5, -0.5, vector[4], vector[5],
                 -0.5, 0.5, -0.5, vector[6], vector[7],
 
-                //derecha
-                -0.5, -0.5, 0.5, vector[0], vector[1],
-                0.5, -0.5, 0.5, vector[2], vector[3],
-                0.5, 0.5, 0.5, vector[4], vector[5],
-                -0.5, 0.5, 0.5, vector[6], vector[7],
+                //arriba
+                -0.5, -0.5, 0.5, vector[7], vector[6],
+                0.5, -0.5, 0.5, vector[5], vector[4],
+                0.5, 0.5, 0.5, vector[3], vector[2],
+                -0.5, 0.5, 0.5, vector[1], vector[0],
 
                 //izquierda
                 -0.5, -0.5, -0.5, vector[0], vector[1],
@@ -210,8 +213,11 @@
 
             // Write u_vMatrix
             var vMatrixUniform = gl.getUniformLocation(gl.program, "u_vMatrix");
-            var vMatrix = mat4.lookAt(mat4.create(), [0, 0, z], [0, 0, 0], [0, up, 0]);
+            var vMatrix = mat4.lookAt(mat4.create(), [0, 0 + up, z], [0, 0, 0], [0, 1, 0]);
             gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
+
+            // Call drawScene again in the next browser repaint
+            requestAnimationFrame(initProjection);
         }
 
         function initTexturesAndDraw(gl) {

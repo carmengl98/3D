@@ -12,6 +12,7 @@
 
     attribute vec4 a_Position;
     attribute vec3 a_Color;
+    //variable ambiental
     uniform vec3 u_AmbientLight;
 
     uniform mat4 u_pMatrix;
@@ -24,6 +25,9 @@
 
         vec4 vertexPosition = u_mvMatrix * a_Position;
         gl_Position = u_pMatrix * u_vMatrix * vertexPosition;
+        //es lo mismo que :
+        //gl_Position = u_pMatrix * u_vMatrix * u_mvMatrix * a_Position;
+        
         vec3 ambient = u_AmbientLight * a_Color;
         v_Color = vec4(ambient, 1.0);
 
@@ -181,7 +185,6 @@
       var ambientLight = [ r, g, b ];
 
       var ambientLightUniform = gl.getUniformLocation(gl.program, "u_AmbientLight");
-
       gl.uniform3fv(ambientLightUniform, ambientLight);
 
    }
