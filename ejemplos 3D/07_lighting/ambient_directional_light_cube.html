@@ -206,7 +206,6 @@
       // Write u_LightColor
       var lightColor = [ 1.0, 1.0, 1.0 ]; // white
       var lightColorUniform = gl.getUniformLocation(gl.program, "u_LightColor");
-
       gl.uniform3fv(lightColorUniform, lightColor);
 
       // Write u_LightDirection
