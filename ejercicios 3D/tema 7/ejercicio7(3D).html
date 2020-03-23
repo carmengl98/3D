@@ -48,7 +48,7 @@
 
             vec3 diffuse = u_LightColor * texture.rgb * nDotL;
             vec3 ambient = u_AmbientLight * texture.rgb;
-            gl_FragColor = vec4(diffuse+ambient , texture.a);
+            gl_FragColor = vec4(diffuse + ambient , texture.a);
         }
     </script>
 
@@ -231,6 +231,12 @@
             var mvMatrix = mat4.fromRotation(mat4.create(), count, [0, 0.5, 0]);
             var uMvMatrix = gl.getUniformLocation(gl.program, "u_mvMatrix");
             gl.uniformMatrix4fv(uMvMatrix, false, mvMatrix);
+
+            // Get the normal direction using the model Matrix
+            var normalMatrixInvert = mat4.invert(mat4.create(), mvMatrix);
+            var normalMatrixInvertTranspose = mat4.transpose(mat4.create(), normalMatrixInvert);
+            var normalUniformMatrix = gl.getUniformLocation(gl.program, "u_NormalMatrix");
+            gl.uniformMatrix4fv(normalUniformMatrix, false, normalMatrixInvertTranspose);
 
             // Draw
             gl.drawElements(gl.TRIANGLES, LATITUDE_BANDS * LONGITUDE_BANDS * 3 * 2, gl.UNSIGNED_SHORT, 0);
