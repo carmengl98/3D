@@ -48,12 +48,13 @@
 
             vec3 diffuse = u_LightColor * texture.rgb * nDotL;
             vec3 ambient = u_AmbientLight * texture.rgb;
-            gl_FragColor = vec4(diffuse + ambient , texture.a);
+            gl_FragColor = vec4(diffuse+ambient , texture.a);
         }
     </script>
 
     <script>
         var gl;
+        var canvas;
         var count = 0.0;
         const LATITUDE_BANDS = 30;
         const LONGITUDE_BANDS = 30;
@@ -88,7 +89,7 @@
             gl.enable(gl.DEPTH_TEST);
 
             // Init textures
-            initTexturesAndDraw(gl);
+            initTexturesAndDraw(gl, canvas);
         }
 
         function initVertexShader(gl) {
@@ -108,7 +109,8 @@
                     var x = sinPhi * sinTheta;
                     var y = cosTheta;
                     var z = cosPhi * sinTheta;
-                    var normals =[ (x, y, z)- (0, 0, 0)];
+                    normals.push(x, y, z);
+
                     vertexesAndTextures.push(RADIUS * x);
                     vertexesAndTextures.push(RADIUS * y);
                     vertexesAndTextures.push(RADIUS * z);
@@ -151,7 +153,7 @@
             gl.vertexAttribPointer(vertexColorAttribute, 2, gl.FLOAT, false, 4 * (3 + 2), 4 * 3);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-            gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 
             var vertexNormalAttribute = gl.getAttribLocation(gl.program, "a_Normal");
             gl.enableVertexAttribArray(vertexNormalAttribute);
@@ -186,18 +188,19 @@
             var x = document.getElementById("x").value;
             var y = document.getElementById("y").value;
             var z = document.getElementById("z").value;
+
             var lightDirection = [ x, y, z ];
-            vec3.normalize(lightDirection, lightDirection); ////???
+            vec3.normalize(lightDirection, lightDirection);
             var lightDirectionUniform = gl.getUniformLocation(gl.program, "u_LightDirection");
             gl.uniform3fv(lightDirectionUniform, lightDirection);
         }
 
-        function initTexturesAndDraw(gl) {
+        function initTexturesAndDraw(gl, canvas) {
             var image = new Image();
             image.src = 'deathstar.png';
             image.onload = function () {
                 loadTexture(gl, "u_Sampler", image, 0, false);
-                drawScene();
+                drawScene(gl, canvas);
             };
         }
 
@@ -216,9 +219,13 @@
             gl.uniform1i(fragmentSamplerUniform, unitNumber);
         }
 
-        function drawScene() {
+        function drawScene(gl, canvas) {
+
             // Clear
             gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // Init projection matrix
+            initProjection(gl, canvas);
 
             // Rotate
             var mvMatrix = mat4.fromRotation(mat4.create(), count, [0, 0.5, 0]);
@@ -230,7 +237,9 @@
 
             // Call drawScene again in the next browser repaint
             count += 0.01;
-            requestAnimationFrame(drawScene);
+            requestAnimationFrame(function() {
+               drawScene(gl, canvas)
+            });
         }
 
         function initShaders(gl, vs_source, fs_source) {

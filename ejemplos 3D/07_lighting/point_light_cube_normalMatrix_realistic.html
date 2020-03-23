@@ -204,7 +204,7 @@
       var x = document.getElementById("x").value;
       var y = document.getElementById("y").value;
       var z = document.getElementById("z").value;
-
+      
       var lightPosition = [ x, y, z ];
       var lightPositionUniform = gl.getUniformLocation(gl.program, "u_lightPosition");
       gl.uniform3fv(lightPositionUniform, lightPosition);
