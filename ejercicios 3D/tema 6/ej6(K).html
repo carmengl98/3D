@@ -42,7 +42,6 @@
     <script>
 
         var gl;
-        var canvas;
         var z = -3;
         var ejx = 0;
         var ejy = 0;
@@ -83,7 +82,7 @@
             gl.enable(gl.DEPTH_TEST);
 
             // Init textures y dibuja las escena
-            initTexturesAndDraw(gl, canvas);
+            initTexturesAndDraw(gl);
 
             // Event listener for mouse wheel
             document.addEventListener('wheel',
@@ -138,7 +137,7 @@
 
                 //cara detrás
                 -0.5, -0.5, 0.5, vector[4], vector[5],
-                0.5, -0.5, 0.5, vector[6], vector[7],
+                0.5, -0.5, 0.5, vector[6], vector[7], //esto estba mal tienes que tener en cuenta que va en orden por eso la flecha de la de atras no te estaba haciendo caso
                 0.5, 0.5, 0.5, vector[0], vector[1],
                 -0.5, 0.5, 0.5, vector[2], vector[3],
 
@@ -211,17 +210,14 @@
             var ratio = canvas.width / canvas.height;
             var pMatrix = mat4.perspective(mat4.create(), 150, ratio, 0.1, 100);
             gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
-
+            
             // Write u_vMatrix
             var vMatrixUniform = gl.getUniformLocation(gl.program, "u_vMatrix");
-            var vMatrix = mat4.lookAt(mat4.create(), [0, eye_camara, z], [0, 0, 0], [0, 1, 0]);
+            var vMatrix = mat4.lookAt(mat4.create(), [0, 0, -3], [0, 0, 0], [0, 1, 0]);
             gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
-
-            // Call drawScene again in the next browser repaint
-            requestAnimationFrame(initProjection);
         }
 
-        function initTexturesAndDraw(gl, canvas) {
+        function initTexturesAndDraw(gl) {
           var image0 = new Image();
           image0.src = 'circle.gif';
           var image1 = new Image();
@@ -230,7 +226,7 @@
               loadTexture(gl, "u_Sampler0", image0, 0, true);
               image1.onload = function () {
                   loadTexture(gl, "u_Sampler1", image1, 1, true);
-                  drawScene(gl, canvas);
+                  drawScene();
               };
             };
         }
@@ -251,12 +247,9 @@
 
         }
 
-        function drawScene(gl, canvas) {
+        function drawScene() {
             // Clear
             gl.clear(gl.COLOR_BUFFER_BIT);
-
-            // Init projection matrix
-            initProjection(gl, canvas);
 
             // Rotate
             var rotatex = mat4.fromXRotation(mat4.create(), ejx);
@@ -264,14 +257,17 @@
             var matrix = mat4.multiply(mat4.create(), rotatey, rotatex);
             var uMvMatrix = gl.getUniformLocation(gl.program, "u_mvMatrix");
             gl.uniformMatrix4fv(uMvMatrix, false, matrix);
-
+            // esto es lo de la camara como no lo tenias te lo coloco pero miratelo yo lo
+            //mire en el libro y elos ejemplos que el subio no recuerdo exactamnete de donde lo saque
+            //pero buscalo
+            var vMatrixUniform = gl.getUniformLocation(gl.program, "u_vMatrix");
+            var vMatrix = mat4.lookAt(mat4.create(),[0,0+eye_camara,z],[0,0,0],[0,1,0]);
+            gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
             // Draw
             gl.drawElements(gl.TRIANGLES, 6 * 2 * 3, gl.UNSIGNED_SHORT, 0);
 
             // Call drawScene again in the next browser repaint
-            requestAnimationFrame(function() {
-               drawScene(gl, canvas)
-            });
+            requestAnimationFrame(drawScene);
         }
 
         function initShaders(gl, vs_source, fs_source) {
