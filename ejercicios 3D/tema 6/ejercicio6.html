@@ -41,7 +41,13 @@
         var z = -3;
         var rotx = 0;
         var roty = 0;
-        var up = 1;
+        var up = 0;
+        var vector = [];
+        var flecha_up = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+        var flecha_right = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0];
+        var flecha_left = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+        var flecha_down = [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+        var vector = flecha_left;
 
         function init() {
             // Get canvas object from the DOM
@@ -85,20 +91,20 @@
                var step = new Number(document.getElementById("step").value);
                switch (ev.keyCode) {
                  case 37: // Left
-                   rotx += step;
-                   roty = 0;
-                 break;
-                 case 39: // Right
-                   rotx -= step;
-                   roty = 0;
-                 break;
-                 case 38: // Up
                    roty += step;
                    rotx = 0;
                  break;
-                 case 40: // Down
+                 case 39: // Right
                    roty -= step;
                    rotx = 0;
+                 break;
+                 case 38: // Up
+                   rotx += step;
+                   roty = 0;
+                 break;
+                 case 40: // Down
+                   rotx -= step;
+                   roty = 0;
                  break;
                  case 33: // PageUp
                    up += step;
@@ -115,36 +121,43 @@
         function initVertexShader(gl) {
             // Vertexes and texture coordinates (x,y,z,s,t)
             var vertexesAndTextures = [
-                -0.5, -0.5, -0.5, 1.0, 1.0,
-                0.5, -0.5, -0.5, 0.0, 1.0,
-                0.5, 0.5, -0.5, 0.0, 0.0,
-                -0.5, 0.5, -0.5, 1.0, 0.0,
+              //cara frontal
+              -0.5, -0.5, -0.5, vector[0], vector[1],
+              0.5, -0.5, -0.5, vector[2], vector[3],
+              0.5, 0.5, -0.5, vector[4], vector[5],
+              -0.5, 0.5, -0.5, vector[6], vector[7],
 
-                -0.5, -0.5, 0.5, 0.0, 1.0,
-                0.5, -0.5, 0.5, 0.0, 0.0,
-                0.5, 0.5, 0.5, 1.0, 0.0,
-                -0.5, 0.5, 0.5, 1.0, 1.0,
+              //cara detrás
+              -0.5, -0.5, 0.5, vector[4], vector[5],
+              0.5, -0.5, 0.5, vector[2], vector[3],
+              0.5, 0.5, 0.5, vector[0], vector[1],
+              -0.5, 0.5, 0.5, vector[6], vector[7],
 
-                -0.5, -0.5, -0.5, 0.0, 0.0,
-                -0.5, 0.5, -0.5, 0.0, 1.0,
-                -0.5, 0.5, 0.5, 1.0, 1.0,
-                -0.5, -0.5, 0.5, 1.0, 0.0,
+              //cara izquierda
+              -0.5, -0.5, -0.5, vector[0], vector[1],
+              -0.5, 0.5, -0.5, vector[2], vector[3],
+              -0.5, 0.5, 0.5, vector[4], vector[5],
+              -0.5, -0.5, 0.5, vector[6], vector[7],
 
-                0.5, -0.5, -0.5, 0.0, 0.0,
-                0.5, 0.5, -0.5, 0.0, 1.0,
-                0.5, 0.5, 0.5, 1.0, 1.0,
-                0.5, -0.5, 0.5, 1.0, 0.0,
+              //cara derecha
+              0.5, -0.5, -0.5, vector[0], vector[1],
+              0.5, 0.5, -0.5, vector[2], vector[3],
+              0.5, 0.5, 0.5, vector[4], vector[5],
+              0.5, -0.5, 0.5, vector[6], vector[7],
 
-                -0.5, -0.5, -0.5, 0.0, 0.0,
-                -0.5, -0.5, 0.5, 0.0, 1.0,
-                0.5, -0.5, 0.5, 1.0, 1.0,
-                0.5, -0.5, -0.5, 1.0, 0.0,
+              //cara arriba
+              -0.5, -0.5, -0.5, vector[0], vector[1],
+              -0.5, -0.5, 0.5, vector[2], vector[3],
+              0.5, -0.5, 0.5, vector[4], vector[5],
+              0.5, -0.5, -0.5, vector[6], vector[7],
 
-                -0.5, 0.5, -0.5, 0.0, 1.0,
-                -0.5, 0.5, 0.5, 0.0, 0.0,
-                0.5, 0.5, 0.5, 1.0, 0.0,
-                0.5, 0.5, -0.5, 1.0, 1.0,
-            ];
+              //cara abajo
+              -0.5, 0.5, -0.5, vector[0], vector[1],
+              -0.5, 0.5, 0.5, vector[2], vector[3],
+              0.5, 0.5, 0.5, vector[4], vector[5],
+              0.5, 0.5, -0.5, vector[6], vector[7],
+          ];
+
 
             // Indexes
             var indexes = [
@@ -185,9 +198,6 @@
         }
 
         function initProjection(gl, canvas) {
-            //nos indica el tipo de proyección que vamos a usar y si vamos a usar
-            //mat4.lookAT()
-            //initVertexShader(gl);
             // Write u_pMatrix
             var pMatrixUniform = gl.getUniformLocation(gl.program, "u_pMatrix");
             var ratio = canvas.width / canvas.height;
@@ -196,7 +206,7 @@
 
             // Write u_vMatrix
             var vMatrixUniform = gl.getUniformLocation(gl.program, "u_vMatrix");
-            var vMatrix = mat4.lookAt(mat4.create(), [0, 0, z], [0, 0, 0], [0, up, 0]);
+            var vMatrix = mat4.lookAt(mat4.create(), [0, 0, z], [0, 0, 0], [0, 1, 0]);
             gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
         }
 

@@ -9,10 +9,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
 
 <script id="shaderVs" type="x-shader/x-vertex">
-
     attribute vec4 a_Position;
     attribute vec3 a_Color;
-    //variable ambiental
+
     uniform vec3 u_AmbientLight;
 
     uniform mat4 u_pMatrix;
@@ -22,26 +21,20 @@
     varying highp vec4 v_Color;
 
     void main(void) {
-
         vec4 vertexPosition = u_mvMatrix * a_Position;
         gl_Position = u_pMatrix * u_vMatrix * vertexPosition;
-        //es lo mismo que :
-        //gl_Position = u_pMatrix * u_vMatrix * u_mvMatrix * a_Position;
-        
+
         vec3 ambient = u_AmbientLight * a_Color;
         v_Color = vec4(ambient, 1.0);
-
     }
-
 </script>
 
 <script id="shaderFs" type="x-shader/x-fragment">
     varying highp vec4 v_Color;
-    void main(void) {
 
+    void main(void) {
         gl_FragColor = v_Color;
     }
-
 </script>
 
 <script>
@@ -103,17 +96,11 @@
    function initVertexShader(gl) {
 
       //    v6----- v5
-
       //   /|      /|
-
       //  v1------v0|
-
       //  | |     | |
-
       //  | |v7---|-|v4
-
       //  |/      |/
-
       //  v2------v3
 
       var vertices = new Float32Array([ // Coordinates
