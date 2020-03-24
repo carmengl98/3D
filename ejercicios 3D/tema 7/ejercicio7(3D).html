@@ -168,12 +168,12 @@
             // Write u_pMatrix (proyeccion)
             var pMatrixUniform = gl.getUniformLocation(gl.program, "u_pMatrix");
             var ratio = canvas.width / canvas.height;
-            var pMatrix = mat4.perspective(mat4.create(), 150, ratio, 0.1, 100);
+            var pMatrix = mat4.perspective(mat4.create(), 0.9, ratio, 0.1, 100);
             gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
 
             // Write u_vMatrix (camara)
             var vMatrixUniform = gl.getUniformLocation(gl.program, "u_vMatrix");
-            var vMatrix = mat4.lookAt(mat4.create(), [0, 0, -3], [0, 0, 0], [0, 1, 0]);
+            var vMatrix = mat4.lookAt(mat4.create(), [0, 0, 3], [0, 0, 0], [0, 1, 0]);
             gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
 
             // Write u_AmbientLight (luz ambiental)
@@ -199,7 +199,7 @@
             var image = new Image();
             image.src = 'deathstar.png';
             image.onload = function () {
-                loadTexture(gl, "u_Sampler", image, 0, false);
+                loadTexture(gl, "u_Sampler", image, 0, true);
                 drawScene(gl, canvas);
             };
         }

@@ -217,8 +217,6 @@
             var vMatrix = mat4.lookAt(mat4.create(), [0, eye_camara, z], [0, 0, 0], [0, 1, 0]);
             gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
 
-            // Call drawScene again in the next browser repaint
-            requestAnimationFrame(initProjection);
         }
 
         function initTexturesAndDraw(gl, canvas) {
