@@ -18,6 +18,7 @@
       var geometry = new THREE.BoxGeometry(2, 2, 2);  //tamaño de el cubo
 
       var texture = new THREE.TextureLoader().load("texture.png")   //cojo la textura
+      //como la textura que vamos a utilizar es la MeshBasicMaterial no vamos a necesitar un punto de luz
       var material = new THREE.MeshBasicMaterial({   //escojo la textura
          map : texture
       });

@@ -15,19 +15,19 @@
       var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
       camera.position.z = 5;
 
-      var geometry = new THREE.BoxGeometry(2, 2, 2);
+      var geometry = new THREE.BoxGeometry(2, 2, 2); //creo el cubo con esas dimensiones
 
-      var texture = new THREE.TextureLoader().load("texture.png")
-      var material = new THREE.MeshPhongMaterial({
+      var texture = new THREE.TextureLoader().load("texture.png") //añado la textura que voy a usar
+      var material = new THREE.MeshPhongMaterial({  //creo el material con la textura añadida
          map : texture
       });
 
-      var mesh = new THREE.Mesh(geometry, material);
+      var mesh = new THREE.Mesh(geometry, material); //creo la malla con la geometria y el material
       scene.add(mesh);
 
-      var light = new THREE.DirectionalLight(0xffffff, 3.0);
-      light.position.set(10, 10, 10);
-      scene.add(light);
+      var light = new THREE.DirectionalLight(0xffffff, 3.0);  //añado un punto de luz por el tipo de textura que estamos usando
+      light.position.set(10, 10, 10);  //
+      scene.add(light);  // añado la luz
 
       var renderer = new THREE.WebGLRenderer({
          antialias : true
@@ -36,7 +36,7 @@
       renderer.setSize(sceneWidth, sceneHeight);
       document.body.appendChild(renderer.domElement);
 
-      animate(mesh, renderer, scene, camera);
+      animate(mesh, renderer, scene, camera);  //lamo a la funcion animate
    }
 
    function animate(mesh, renderer, scene, camera) {
@@ -49,6 +49,9 @@
          animate(mesh, renderer, scene, camera);
       });
    }
+
+   //¿¿¿¿¿¿¿¿¿¿¿¿¿por qué van desapareciendo las caras???????????????
+
 </script>
 </head>
 
