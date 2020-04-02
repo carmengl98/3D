@@ -18,15 +18,13 @@
       camera.lookAt(scene.position);
 
       var geometry = new THREE.SphereBufferGeometry(2, 20, 20);
-      var wireframe = new THREE.WireframeGeometry(geometry);
-      var sphere = new THREE.LineSegments(wireframe);
-      sphere.material.color = { r:1, g:1, b:1 };
-      sphere.material.transparent = true;
-      sphere.material.opacity = 0.5;
-      scene.add(sphere);
+      var texture = new THREE.TextureLoader().load("earth.png");
 
-      var axes = new THREE.AxesHelper(4);
-      scene.add(axes);
+      var material = new THREE.MeshBasicMaterial({
+         map : texture
+      });
+      var mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
 
       var renderer = new THREE.WebGLRenderer({
          antialias : true
@@ -35,12 +33,11 @@
       renderer.setSize(sceneWidth, sceneHeight);
       document.body.appendChild(renderer.domElement);
 
-      animate(sphere, renderer, scene, camera);
+      animate(mesh, renderer, scene, camera);
    }
 
    function animate(mesh, renderer, scene, camera) {
-      mesh.rotation.y += 0.01;  
-      mesh.rotation.x += 0.01;
+      mesh.rotation.y -= 0.01;
       renderer.render(scene, camera);
 
       requestAnimationFrame(function() {
