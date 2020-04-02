@@ -4,72 +4,63 @@
 <head>
 <title>Three.js: Geometries</title>
 
+<!-- usamos la librería de abajo para usar three.js  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
 
 <script>
    function init() {
       // Scene
-      var scene = new THREE.Scene();
+      var scene = new THREE.Scene(); // creo una escena usando el objeto THREE
 
-      // Renderer
-      var renderer = new THREE.WebGLRenderer();
-      var sceneWidth = window.innerWidth;
-      var sceneHeight = window.innerHeight;
-      renderer.setSize(sceneWidth, sceneHeight);
-      document.body.appendChild(renderer.domElement);
+      // Renderer (el elemento que permite generar gráficos dentro de la escena se conoce como renderizador)
+      var renderer = new THREE.WebGLRenderer(); //creamos el renderizador
+      var sceneWidth = window.innerWidth;   //ancho de la escena == canvas
+      var sceneHeight = window.innerHeight;  //alto de la escena == canvas
+      renderer.setSize(sceneWidth, sceneHeight); //introduzco el tamaño de la escena
+      document.body.appendChild(renderer.domElement); //?????????????????????????????
 
       // Axes helper
-      var axes = new THREE.AxesHelper(20);
-      scene.add(axes);
-
-      // Plane
-      var planeGeometry = new THREE.PlaneGeometry(60, 20);
-      var planeMaterial = new THREE.MeshBasicMaterial({
-         color : 0xAAAAAA
-      });
-      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-
-      plane.rotation.x = -0.5 * Math.PI;
-      plane.position.set(15, 0, 0);
-
-      scene.add(plane);
+      var axes = new THREE.AxesHelper(20); //tamaño (largo) de los ejes axiales
+      scene.add(axes); //añaado los ejes axiales
 
       // Cube
-      var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-      var cubeMaterial = new THREE.MeshBasicMaterial({
+      var cubeGeometry = new THREE.BoxGeometry(5, 5, 9); //cubo con tamaño(x,y,z)
+      var cubeMaterial = new THREE.MeshBasicMaterial({  //creo el material del cubo
          color : 0xFF0000,
          wireframe : true
       });
-      var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      var cube = new THREE.Mesh(cubeGeometry, cubeMaterial); //creo la malla con la geometría y el material
 
-      cube.position.set(-4, 3, 0);
+      cube.position.set(-4, 3, 0);  //coloco el cubo en esa posicion
 
-      scene.add(cube);
+      scene.add(cube); //añado el cubo a la escena
 
       // Sphere
-      var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-      var sphereMaterial = new THREE.MeshBasicMaterial({
+      var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);  // geometría de la espera con tamaño (x,y,z)
+      var sphereMaterial = new THREE.MeshBasicMaterial({  //creo el material de la esfera
          color : 0x7777FF,
          wireframe : true
       });
-      var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial); //creo la malla con la geometría y el material
 
-      sphere.position.set(20, 4, 2);
+      sphere.position.set(20, 10, 2);  //coloco la esfera en esa posicion
 
-      scene.add(sphere);
+      scene.add(sphere);  //añado la esfera a la escena
 
       // Camera
+      //será necesario especificar el tipo de proyección (denominada cámara)
       var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
       camera.position.set(-20, 20, 20);
       camera.lookAt(scene.position);
 
       // Render
       renderer.render(scene, camera);
+      //el método render del objeto renderizador nos permite realizar la operación de dibujado de la escena
    }
 </script>
 </head>
 
-<body onload="init()">
+<body onload="init()"> <!-- llamo a la funcion init() -->
 </body>
 
 </html>
