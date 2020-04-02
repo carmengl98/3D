@@ -18,8 +18,8 @@
       camera.lookAt(scene.position); //
 
       var geometry = new THREE.SphereBufferGeometry(2, 20, 20); //creo la esfera con ese tamaño
-      var wireframe = new THREE.WireframeGeometry(geometry); //????????????
-      var sphere = new THREE.LineSegments(wireframe);  //????
+      var wireframe = new THREE.WireframeGeometry(geometry); //malla????????????
+      var sphere = new THREE.LineSegments(wireframe);  //conecta los segmentos ¿¿¿no se si es la malla???
       sphere.material.color = { r:1, g:1, b:1 };
       sphere.material.transparent = true;  //transparencia de la esfera
       sphere.material.opacity = 0.5;   //opcacidad de la esfera
