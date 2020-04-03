@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Three.js: Collision detection</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
+
+
+<script>
+   //var stepX = 0.15;
+   //var stepY = 0.25;
+
+   function init() {
+     var scene = new THREE.Scene();
+     var sceneWidth = window.innerWidth - 20;
+     var sceneHeight = window.innerHeight - 20;
+
+     var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
+     camera.position.set(0, -10, 15);
+     camera.lookAt(scene.position);
+
+     var renderer = new THREE.WebGLRenderer({
+        antialias : true
+     });
+     renderer.shadowMap.enabled = true;
+     renderer.setSize(sceneWidth, sceneHeight);
+     document.body.appendChild(renderer.domElement);
+
+     var geometry = new THREE.SphereGeometry(1, 20, 20);
+     var material = new THREE.MeshNormalMaterial();
+     var sphere = new THREE.Mesh(geometry, material);
+     scene.add(sphere);
+
+     var geometry = new THREE.PlaneGeometry(10, 20);
+     var texture = new THREE.TextureLoader().load("wood.png");
+     var material = new THREE.MeshPhysicalMaterial({
+        map : texture
+     });
+     var plane = new THREE.Mesh(geometry, material);
+     scene.add(plane);
+
+     renderer.render(scene, camera); //uso el renderizador
+
+
+
+   }
+  </script>
+
+
+</head>
+
+<body onload="init()">
+</body>
+
+</html>
