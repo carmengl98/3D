@@ -23,17 +23,19 @@
          antialias : true
       });
       renderer.shadowMap.enabled = true;
-      renderer.setSize(sceneWidth, sceneHeight);
+      renderer.setSize(sceneWidth, sceneHeight); //pongo el tamaño de la escena
       document.body.appendChild(renderer.domElement);
 
-      var light = getLight();
+      var light = getLight(); // llamo a la funcion getLight()
+      //pongo los bordes llamando a la funcion getBorder()
       var leftBorder = getBorder("left", 1, 20, 2, -5, 0, 0);
       var rightBorder = getBorder("right", 1, 20, 2, 5, 0, 0);
       var topBorder = getBorder("top", 11, 1, 2, 0, 10, 0);
       var downBorder = getBorder("down", 9, 1, 2, 0, -9.5, 0);
-      var sphere = getSphere();
-      var floor = getFloor();
+      var sphere = getSphere(); // llamo a la funcion getSphere()
+      var floor = getFloor(); //llamo a la funcion getFloor()
 
+      //añado a la escena
       scene.add(light);
       scene.add(leftBorder);
       scene.add(rightBorder);
@@ -44,16 +46,16 @@
 
       var borders = [ leftBorder, rightBorder, topBorder, downBorder ];
 
-      animate(sphere, borders, renderer, scene, camera);
+      animate(sphere, borders, renderer, scene, camera); //llamo a la funcion animate()
    }
 
    function animate(sphere, borders, renderer, scene, camera) {
-      checkCollision(sphere, borders);
+      checkCollision(sphere, borders);  //LLamo a la funcion checkCollision()
 
-      sphere.position.x += stepX;
+      sphere.position.x += stepX; //?
       sphere.position.y += stepY;
 
-      renderer.render(scene, camera);
+      renderer.render(scene, camera); //uso el renderizador
 
       requestAnimationFrame(function() {
          animate(sphere, borders, renderer, scene, camera);
@@ -78,17 +80,17 @@
    function getSphere() {
       var geometry = new THREE.SphereGeometry(1, 20, 20);
       var material = new THREE.MeshNormalMaterial();
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.position.z = 1;
-      mesh.castShadow = true;
-      mesh.name = "sphere";
+      var mesh = new THREE.Mesh(geometry, material); //hago la malla de la esfera
+      mesh.position.z = 1; //posicion de la malla
+      mesh.castShadow = true; // pongo la sombra???
+      mesh.name = "sphere"; //¿para que es el nombre??
 
       return mesh;
    }
 
    function getFloor() {
       var geometry = new THREE.PlaneGeometry(10, 20);
-      var mesh = new THREE.Mesh(geometry, getWoodMaterial());
+      var mesh = new THREE.Mesh(geometry, getWoodMaterial()); // hago la malla del suelo llamando a la funcion getWoodMaterial()
       mesh.receiveShadow = true;
 
       return mesh;
@@ -96,10 +98,10 @@
 
    function getBorder(name, x, y, z, posX, posY, posZ) {
       var geometry = new THREE.BoxGeometry(x, y, z);
-      var mesh = new THREE.Mesh(geometry, getWoodMaterial());
+      var mesh = new THREE.Mesh(geometry, getWoodMaterial());  // hago la malla de los bordes llamando a la funcion getWoodMaterial()
       mesh.receiveShadow = true;
-      mesh.position.set(posX, posY, posZ);
-      mesh.name = name;
+      mesh.position.set(posX, posY, posZ); //posicion de los bordes pero no del suelo????
+      mesh.name = name; //name??
 
       return mesh;
    }
@@ -110,8 +112,8 @@
          map : texture
       });
       material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
-      material.map.repeat.set(4, 4);
-      material.side = THREE.DoubleSide;
+      material.map.repeat.set(4, 4); //repeat??
+      material.side = THREE.DoubleSide;  //??
 
       return material;
    }
