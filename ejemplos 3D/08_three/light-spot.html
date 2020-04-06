@@ -2,196 +2,117 @@
 
 <html>
 
-
-
 <head>
 
 <title>Three.js: Spot light</title>
 
-
-
 <style>
 
 * {
-
     margin: 0px;
-
 }
 
 </style>
 
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
-
-
 
 <script>
 
    function init() {
 
       var scene = new THREE.Scene();
-
       var sceneWidth = window.innerWidth;
-
       var sceneHeight = window.innerHeight;
 
-
-
       var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
-
       camera.position.set(0, -10, 15);
-
       camera.lookAt(scene.position);
 
-
-
       var renderer = new THREE.WebGLRenderer({
-
          antialias : true
-
       });
 
-      renderer.shadowMap.enabled = true;
-
+      renderer.shadowMap.enabled = true; //habilitamos el uso de la sombra
       renderer.setSize(sceneWidth, sceneHeight);
-
       document.body.appendChild(renderer.domElement);
 
       var render = function() {
-
          renderer.render(scene, camera);
-
       };
 
-
-
-      var helper = addLight(scene);
-
+      var helper = addLight(scene); //usamos la variable helper para la luz
       addSphere(scene);
-
       addFloor(scene, render);
-
       render();
 
-
-
       // Control
-
+      //Añadimos un control para activar/desactivar el helper para la zona de la sombra
       var control = new function() {
-
          this.lightHelper = false;
-
-
-
          this.update = function() {
-
             if (control.lightHelper) {
-
                scene.add(helper);
-
             } else {
-
                scene.remove(helper);
-
             }
-
             render();
-
          }
-
       };
 
       var gui = new dat.GUI();
-
       gui.add(control, 'lightHelper', true, false).onChange(control.update);
 
    }
 
-
-
    function addLight(scene) {
-
-      var spotLight = new THREE.SpotLight();
-
-      spotLight.position.set(-10, 10, 10);
-
+      var spotLight = new THREE.SpotLight(); //tipo de luz
+      spotLight.position.set(-10, 10, 10); //donde apunta la luz o donde se coloca???
       spotLight.angle = Math.PI / 12;
-
-      spotLight.castShadow = true;
-
+      spotLight.castShadow = true;  //activamos la sombra de la luz
       spotLight.shadow.camera.near = 10;
-
       spotLight.shadow.camera.far = 25;
-
       spotLight.shadow.camera.fov = 30;
-
       spotLight.shadow.camera.aspect = 1;
-
       spotLight.shadow.mapSize.width = 4096;
-
       spotLight.shadow.mapSize.height = 4096;
 
-      scene.add(spotLight);
+      scene.add(spotLight); //añadimos la luz a la escena
+      var ambientLight = new THREE.AmbientLight(0xFFFFFF); //luz blanca ambiental
+      scene.add(ambientLight); //añadimos la luz ambiental a la escena
 
 
-
-      var ambientLight = new THREE.AmbientLight(0xFFFFFF);
-
-      scene.add(ambientLight);
-
-
-
+      //añadimos las características de la sombra a la variable helper
       var helper = new THREE.CameraHelper(spotLight.shadow.camera);
-
       return helper;
-
    }
-
-
 
    function addSphere(scene) {
 
       var geometry = new THREE.SphereGeometry(1, 20, 20);
-
       var material = new THREE.MeshNormalMaterial();
-
       var mesh = new THREE.Mesh(geometry, material);
 
       mesh.position.z = 1;
-
-      mesh.castShadow = true;
-
+      mesh.castShadow = true;  // activamos la sombra de la esfera
       scene.add(mesh);
 
    }
 
-
-
    function addFloor(scene, render) {
-
       var geometry = new THREE.PlaneGeometry(10, 20);
-
-      var texture = new THREE.TextureLoader().load("wood.png", render);
-
+      var texture = new THREE.TextureLoader().load("wood.png", render); //le paso el render
       var material = new THREE.MeshPhysicalMaterial({
-
          map : texture
-
       });
 
-      material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
-
-      material.map.repeat.set(4, 4);
-
-      material.side = THREE.DoubleSide;
+      material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping; // repite la rextura en las coordenadas s y t
+      material.map.repeat.set(4, 4); // repite la textura cuatro por cuatro ???
+      material.side = THREE.DoubleSide; // por que lado quiero que sea visible(en esete caso por ambos lados)
 
       var mesh = new THREE.Mesh(geometry, material);
-
-      mesh.receiveShadow = true;
-
+      //el suelo no tiene sombra solo la recibe
+      mesh.receiveShadow = true; //activo para que el suelo reciba sombra
       scene.add(mesh);
 
    }
@@ -200,12 +121,7 @@
 
 </head>
 
-
-
 <body onload="init()">
-
 </body>
-
-
 
 </html>

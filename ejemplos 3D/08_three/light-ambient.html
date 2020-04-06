@@ -2,7 +2,6 @@
 
 <html>
 
-
 <head>
 
 <title>Three.js: Ambient light</title>
@@ -10,15 +9,12 @@
 <style>
 
 * {
-
     margin: 0px;
-
 }
 
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
-
 
 <script>
 
@@ -26,88 +22,59 @@
       var scene = new THREE.Scene();
       var sceneWidth = window.innerWidth;
       var sceneHeight = window.innerHeight;
+
       var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
-
       camera.position.set(0, -10, 15);
-
       camera.lookAt(scene.position);
 
-
-
       var renderer = new THREE.WebGLRenderer({
-
          antialias : true
-
       });
 
       renderer.setSize(sceneWidth, sceneHeight);
-
-      document.body.appendChild(renderer.domElement);
+      document.body.appendChild(renderer.domElement); //añada el html al canvas
 
       var render = function() {
-
          renderer.render(scene, camera);
-
       };
 
-
-
       addLight(scene);
-
       addSphere(scene);
-
       addFloor(scene, render);
 
    }
 
-
-
    function addLight(scene) {
 
-      var light = new THREE.AmbientLight(0xFFFFFF);
-
+      var light = new THREE.AmbientLight(0xFFFFFF); //luz blanca
       scene.add(light);
 
    }
 
-
-
    function addSphere(scene) {
 
       var geometry = new THREE.SphereGeometry(1, 20, 20);
-
       var material = new THREE.MeshNormalMaterial();
-
       var mesh = new THREE.Mesh(geometry, material);
-
       mesh.position.z = 1;
-
       scene.add(mesh);
 
    }
 
-
-
    function addFloor(scene, render) {
 
       var geometry = new THREE.PlaneGeometry(10, 20);
-
       var texture = new THREE.TextureLoader().load("wood.png", render);
-
       var material = new THREE.MeshPhysicalMaterial({
-
          map : texture
-
       });
 
+      //que se repitan las coordenadas de s y t(también se puede poner igualando por separado)
       material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
-
-      material.map.repeat.set(4, 4);
-
+      material.map.repeat.set(4, 4); //metodo de repeticion
       material.side = THREE.DoubleSide;
 
       var mesh = new THREE.Mesh(geometry, material);
-
       scene.add(mesh);
 
    }
@@ -116,12 +83,7 @@
 
 </head>
 
-
-
 <body onload="init()">
-
 </body>
-
-
 
 </html>
