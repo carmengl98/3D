@@ -8,7 +8,7 @@
 
 
 <script>
-   //var stepX = 0.15;
+   var stepX = 0.15;
    //var stepY = 0.25;
 
    function init() {
@@ -35,65 +35,76 @@
      var border_right = addBorder(scene , 1, 20, 2, -5, 0, 0);
      var cpu = addBorder(scene , 4 , 1, 2, 0, 11, 0);
      var usuario = addBorder(scene , 4, 1, 2, 0, -11, 0);
-     renderer.render(scene, camera);
+     
+     animate(sphere, renderer, scene, camera);
+
    }
 
-    function addLight(scene) {
-       var light = new THREE.DirectionalLight();
-       light.position.set(4, 4, 4);
-       light.castShadow = true;
-       light.shadow.camera.near = 0;
-       light.shadow.camera.far = 16;
-       light.shadow.camera.left = -8;
-       light.shadow.camera.right = 5;
-       light.shadow.camera.top = 10;
-       light.shadow.camera.bottom = -10;
-       light.shadow.mapSize.width = 4096;
-       light.shadow.mapSize.height = 4096;
+  function animate(sphere, renderer, scene, camera) {
+    sphere.position.x += 0.1;
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(function() {
+       animate(sphere, renderer, scene, camera);
+    });
+  }
+
+  function addLight(scene) {
+     var light = new THREE.DirectionalLight();
+     light.position.set(4, 4, 4);
+     light.castShadow = true;
+     light.shadow.camera.near = 0;
+     light.shadow.camera.far = 16;
+     light.shadow.camera.left = -8;
+     light.shadow.camera.right = 5;
+     light.shadow.camera.top = 10;
+     light.shadow.camera.bottom = -10;
+     light.shadow.mapSize.width = 4096;
+     light.shadow.mapSize.height = 4096;
        scene.add(light);  //??
     }
 
-    function addSphere(scene) {
-      var geometry = new THREE.SphereGeometry(1, 20, 20);
-      var material = new THREE.MeshNormalMaterial();
-      var mesh_sphere = new THREE.Mesh(geometry, material);
-      mesh_sphere.position.z = 1;
-      mesh_sphere.castShadow = true;
-      scene.add(mesh_sphere);
-    }
+  function addSphere(scene) {
+    var geometry = new THREE.SphereGeometry(1, 20, 20);
+    var material = new THREE.MeshNormalMaterial();
+    var mesh_sphere = new THREE.Mesh(geometry, material);
+    mesh_sphere.position.z = 1;
+    mesh_sphere.castShadow = true;
+    scene.add(mesh_sphere);
+  }
 
-    function addFloor(scene) {
-     var geometry = new THREE.PlaneGeometry(10, 20);
-     var material = new THREE.MeshNormalMaterial();     // quitaaar cuando pueda poner la madera
-     var mesh_floor = new THREE.Mesh(geometry, material);
-     mesh_floor.receiveShadow = true;
-     scene.add(mesh_floor);
-    }
+  function addFloor(scene) {
+   var geometry = new THREE.PlaneGeometry(10, 20);
+   var material = new THREE.MeshNormalMaterial();     // quitaaar cuando pueda poner la madera
+   var mesh_floor = new THREE.Mesh(geometry, material);
+   mesh_floor.receiveShadow = true;
+   scene.add(mesh_floor);
+  }
 
-    function addBorder(scene, x, y, z, posX, posY, posZ){
-      var geometry = new THREE.BoxGeometry(x, y, z);
-      var material = new THREE.MeshNormalMaterial();  // quitarr cuando pueda poner la madera
-      var mesh_border = new THREE.Mesh(geometry, material);
-      mesh_border.receiveShadow = true;
-      mesh_border.position.set(posX, posY, posZ);
-      scene.add(mesh_border);
-    }
+  function addBorder(scene, x, y, z, posX, posY, posZ){
+    var geometry = new THREE.BoxGeometry(x, y, z);
+    var material = new THREE.MeshNormalMaterial();  // quitarr cuando pueda poner la madera
+    var mesh_border = new THREE.Mesh(geometry, material);
+    mesh_border.receiveShadow = true;
+    mesh_border.position.set(posX, posY, posZ);
+    scene.add(mesh_border);
+  }
 
-    function getMaterial() {
-      var texture = new THREE.TextureLoader().load("wood.png");
-      var material = new THREE.MeshPhysicalMaterial({
-        map : texture
-      });
-     material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
-     material.map.repeat.set(4, 4);
-     material.side = THREE.DoubleSide;
+  function getMaterial() {
+    var texture = new THREE.TextureLoader().load("wood.png");
+    var material = new THREE.MeshPhysicalMaterial({
+      map : texture
+    });
+   material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
+   material.map.repeat.set(4, 4);
+   material.side = THREE.DoubleSide;
 
-      return material;
-    }
+   return material;
+  }
 
-     // var render = function() {
-     //    renderer.render(scene, camera);
-     // };
+ // var render = function() {
+ //    renderer.render(scene, camera);
+ // };
 
 
   </script>
