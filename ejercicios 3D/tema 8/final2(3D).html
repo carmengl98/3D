@@ -2,10 +2,9 @@
 <html>
 
 <head>
-<title>Three.js: Collision detection</title>
+<title>Three.js</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
-
 
 <script>
    var stepX = 0.15;
@@ -17,7 +16,7 @@
      var sceneHeight = window.innerHeight - 20;
 
      var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
-     camera.position.set(0, 0, 15); //ver bieeen
+     camera.position.set(0, 0, 16); //ver bieeen
      camera.lookAt(scene.position);
 
      var renderer = new THREE.WebGLRenderer({
@@ -35,18 +34,19 @@
      var border_right = addBorder(scene , 1, 20, 2, -5, 0, 0);
      var cpu = addBorder(scene , 4 , 1, 2, 0, 11, 0);
      var usuario = addBorder(scene , 4, 1, 2, 0, -11, 0);
-     
+     renderer.render(scene, camera);  // no se si luego lo tengo que quitar
      animate(sphere, renderer, scene, camera);
 
    }
 
   function animate(sphere, renderer, scene, camera) {
-    sphere.position.x += 0.1;
-    renderer.render(scene, camera);
+     sphere.position.x += stepX;
+     renderer.render(scene, camera);
 
-    requestAnimationFrame(function() {
-       animate(sphere, renderer, scene, camera);
-    });
+
+     requestAnimationFrame(function() {
+        animate(sphere, renderer, scene, camera);
+     });
   }
 
   function addLight(scene) {
@@ -61,7 +61,7 @@
      light.shadow.camera.bottom = -10;
      light.shadow.mapSize.width = 4096;
      light.shadow.mapSize.height = 4096;
-       scene.add(light);  //??
+     scene.add(light);  //??
     }
 
   function addSphere(scene) {
@@ -90,12 +90,13 @@
     scene.add(mesh_border);
   }
 
-  function getMaterial() {
-    var texture = new THREE.TextureLoader().load("wood.png");
+  function getMaterial() { //renderer???
+    var texture = new THREE.TextureLoader().load("earth.png");
     var material = new THREE.MeshPhysicalMaterial({
       map : texture
     });
-   material.map.wrapS = material.map.wrapT = THREE.RepeatWrapping;
+   material.map.wrapS = THREE.RepeatWrapping;
+   material.map.wrapT = THREE.RepeatWrapping;
    material.map.repeat.set(4, 4);
    material.side = THREE.DoubleSide;
 

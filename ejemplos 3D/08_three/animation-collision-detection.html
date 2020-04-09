@@ -119,26 +119,41 @@
    }
 
    function checkCollision(sphere, borders) {
-      var originPosition = sphere.position.clone();
+     //primero comprobaremos la colision de la esfera contra los bordes
+      var originPosition = sphere.position.clone(); // cogemos la posicion de la esfera
 
-      for (var i = 0; i < sphere.geometry.vertices.length; i++) {
+      for (var i = 0; i < sphere.geometry.vertices.length; i++) { // para todos los vertices que componen la esfera (lenght)
+        //clonamos todos los vertices uno a uno
          var localVertex = sphere.geometry.vertices[i].clone();
+         //le aplico la matrix que tiene aplicada a la esfera para saber que rotacion tiene ese vertice, como está orientada la esfera
          var globalVertex = localVertex.applyMatrix4(sphere.matrix);
+         // llamamos a la funcion (sphere.position = centro de la esfera) para obtener el vector direccional
          var directionVector = globalVertex.sub(sphere.position);
+         //con la posicion y la direccion ya normalizada pide los resultados de colision y dame una serie de rayos
          var ray = new THREE.Raycaster(originPosition, directionVector.clone().normalize());
+         // Con la variable ray llamamos al intersectObjects para con que objetos colisiona
+         // estos objetos son los bordes. Este comprueba todos los vertices de todos los bordes
+         // a ver si con alguno de ellos hay una colisión y nos devuelve por orden de menor a
+         // mayor que vertices llegan antes el primero que impacte será el cero por eso en el
+         // if empezamos por el cero
          var collisionResults = ray.intersectObjects(borders);
+
+         // tenemos que comprobar que haya al menos una colision (collisionResults.length > 0)
+         // Y que además   que la distancia de ese objeto sea menor que mi vector (longuitud en este caso de la esfera que el diametro?)
          if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
             // Collision detected
+            //si la colision primera (0) es en la izquierda o la derecha cambio de direccion de x
             if (collisionResults[0].object.name == "left" || collisionResults[0].object.name == "right") {
-               stepX *= -1;
+               stepX *= -1; //cambio de direccion
             }
+            //si la colision primera (0) es arriba o abajo cambio de direccion de y
             if (collisionResults[0].object.name == "down" || collisionResults[0].object.name == "top") {
-               stepY *= -1;
+               stepY *= -1; // cambio de direccion
             }
             break;
          }
       }
-   }
+   }                           //objetct???????????????
 </script>
 </head>
 
