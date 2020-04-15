@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Three.js: Collision detection</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
+<style>
+  body{
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+
+<script>
+   var renderer;
+   var stepX = 0.2;
+   var stepY = 0.2;
+   var puntos_cpu = 0;
+   var puntos_player = 0;
+   var inicio = false;
+
+   function init() {
+      var scene = new THREE.Scene();
+      var sceneWidth = window.innerWidth - 20;
+      var sceneHeight = window.innerHeight - 20;
+
+      var camera = new THREE.PerspectiveCamera(90, sceneWidth / sceneHeight, 0.01, 100);
+      camera.position.set(0, -15, 15);
+      camera.lookAt(scene.position);
+
+      renderer = new THREE.WebGLRenderer({
+         antialias : true
+      });
+
+      renderer.shadowMap.enabled = true;
+      renderer.setSize(sceneWidth, sceneHeight);
+      document.body.appendChild(renderer.domElement);
+
+      var light = getLight();
+      var leftBorder = getBorder("left", 1, 20, 2, -5, 0, 0);
+      var rightBorder = getBorder("right", 1, 20, 2, 5, 0, 0);
+      var cpu = getBorder("cpu", 3, 1, 2, 0, 10, 0);
+      var player = getBorder("player", 3, 1, 2, 0, -10, 0);
+      var pelota = getPelota();
+      var floor = getFloor();
+
+      //añado a la escena
+      scene.add(light);
+      scene.add(leftBorder);
+      scene.add(rightBorder);
+      scene.add(cpu);
+      scene.add(player);
+      scene.add(pelota);
+      scene.add(floor);
+
+      var border = [ leftBorder, rightBorder, cpu, player ];
+
+      animate(pelota, border, renderer, scene, camera);
+
+   }
+
+   function animate(pelota, border, renderer, scene, camera) {
+      checkCollision(pelota, border);
+
+      empezar(pelota);
+      if (inicio){
+        pelota.position.x += stepX;
+        pelota.position.y += stepY;
+        move_jugador(border[3]);
+        move_cpu(border[2]);
+      }
+
+       if (puntos_player == 5 || puntos_cpu == 5){
+         console.log("he ganado");
+         inicio = false;
+         puntos_player = 0;
+         puntos_cpu = 0;
+         document.body.removeChild(renderer.domElement);
+         //init();
+
+       }
+
+      renderer.render(scene, camera);
+
+      requestAnimationFrame(function() {
+         animate(pelota, border, renderer, scene, camera);
+      });
+   }
+
+   function empezar(pelota){
+     console.log(inicio);
+     window.onkeydown = (e) => {
+       switch (e.key) {
+          // Space
+          case ' ':
+            inicio = true;
+            pelota.position.x = 0;
+            pelota.position.y = 0;
+            break;
+          default:
+             break;
+         }
+       }
+   }
+
+   function move_jugador(player){
+     document.onkeydown = function(ev) {
+        switch (ev.keyCode) {
+         // left
+         case 37:
+           console.log('left!');
+           inicio = true;
+           player.position.x -= stepX;
+           break;
+         // Right
+         case 39:
+           console.log('Right!');
+           inicio = true;
+           player.position.x += stepX;
+           break;
+         default:
+            break;
+        }
+      }
+   }
+
+   function move_cpu(cpu){
+     cpu.position.x += Math.abs(stepX*0.65);
+     if (cpu.position.x < -7){
+      cpu.position.x += stepX;
+    }else if (cpu.position.x > 7){
+      cpu.position.x += -stepX;
+    }
+   }
+
+   function getLight() {
+      var light = new THREE.DirectionalLight();
+      light.position.set(5, 5, 5);
+      light.castShadow = true;
+      light.shadow.camera.near = -10;
+      light.shadow.camera.far = 20;
+      light.shadow.camera.left = -20;
+      light.shadow.camera.right = 20;
+      light.shadow.camera.top = 15;
+      light.shadow.camera.bottom = -15;
+      light.shadow.mapSize.width = 4096;
+      light.shadow.mapSize.height = 4096;
+      return light;
+   }
+
+   function getPelota() {
+      var geometry = new THREE.SphereGeometry(1, 20, 20);
+      var material = new THREE.MeshNormalMaterial();
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.position.z = 1;
+      mesh.castShadow = true;
+
+      return mesh;
+   }
+
+   function getFloor() {
+      var geometry = new THREE.PlaneGeometry(10, 20);
+      var mesh = new THREE.Mesh(geometry, getMaterial("f1.jpg"));
+      mesh.receiveShadow = true;
+
+      return mesh;
+   }
+
+   function getBorder(name, x, y, z, posX, posY, posZ) {
+      var geometry = new THREE.BoxGeometry(x, y, z);
+      if (name == 'cpu'|| name == 'player'){
+        var mesh = new THREE.Mesh(geometry, getMaterial("paleta.jpg"));
+      }else {
+        var mesh = new THREE.Mesh(geometry, getMaterial("wood.png"));
+      }
+      mesh.receiveShadow = true;
+      mesh.position.set(posX, posY, posZ);
+      mesh.name = name;
+
+      return mesh;
+   }
+
+   function getMaterial(typeTexture) {
+      var texture = new THREE.TextureLoader().load(typeTexture);
+      var Material = new THREE.MeshPhysicalMaterial({
+      map : texture,
+      });
+
+      Material.map.wrapS = Material.map.wrapT = THREE.RepeatWrapping;
+      Material.map.repeat.set(1, 1);
+      Material.side = THREE.DoubleSide;
+
+      return Material;
+   }
+
+   function checkCollision(pelota, border) {
+      var originPosition = pelota.position.clone();
+      var pala_cpu = border[2];
+      var pala_jugador = border[3];
+
+      for (var i = 0; i < pelota.geometry.vertices.length; i++) {
+         var localVertex = pelota.geometry.vertices[i].clone();
+         var globalVertex = localVertex.applyMatrix4(pelota.matrix);
+         var directionVector = globalVertex.sub(pelota.position);
+         var ray = new THREE.Raycaster(originPosition, directionVector.clone().normalize());
+         var collisionResults = ray.intersectObjects(border);
+         if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+            // Collision detected
+            if (collisionResults[0].object.name == "left" || collisionResults[0].object.name == "right") {
+               stepX *= -1;
+            }
+            if (collisionResults[0].object.name == "player" || collisionResults[0].object.name == "cpu") {
+               stepY *= -1;
+            }else{
+              console.log("Tanto!!!!", puntos_player);//como hagoooo???
+              puntos_player += 1;
+            }
+            break;
+         }
+      }
+   }
+
+</script>
+</head>
+
+<body onload="init()">
+  <h1>PONG EN 3D</h1>
+  <h3>INSTRUCCIONES DEL PONG:</h3>
+  <p>Pong es un juego en dos dimensiones que simula un tenis de mesa. El objetivo
+     consiste en que uno de los jugadores consiga llegar a 5 puntos antes que el
+     oponente; este será el GANADOR. Estos puntos se obtienen cuando el jugador
+     adversario falla al devolver la pelota. En este juego el jugador controla una
+     paleta y competirá contra un oponente controlado por computadora.</p>
+  <h3>MOVIMIENTOS:</h3>
+  <p>RIGHT -- </p>
+  <p>LEFT  -- </p><br>
+  <span>cpu:</span>
+  <span>player:</span>
+</body>
+
+</html>
