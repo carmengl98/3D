@@ -1,3 +1,14 @@
+<!--
+- Funcionalidad básica
+- Funcionalidad avanzada (ángulo de rebote variable, velocidad de desplazamiento vertical variable, posibilidad de ganar a la CPU
+- Mejoras:
+Introducir niveles de dificultad. Pueden ser configurable al iniciar el juego o ir
+aumentando según se juego una y otra vez.
+- Marcador con gráfico 3D en lugar de como texto HTML.
+- Posibilidad de elegir diferentes texturas para los elementos de juego (“skin”).
+- Animaciones adicionales (movimiento de la cámara o punto de luz en función del
+juego).....
+-->
 <!DOCTYPE html>
 <html>
 
@@ -10,15 +21,47 @@
     text-align: center;
     font-style: italic;
   }
+  button{
+    width: 140px;
+    height: 50px;
+    font-Size:20px;
+    background-color: lightblue;
+    border-color: white;
+    border-radius: 40px;
+    margin-right: 90px;
+    font-style: italic;
+  }
 </style>
 
 <script>
    var renderer;
-   var stepX = 0.2;
-   var stepY = 0.2;
+   var stepX = 0;
+   var stepY = 0;
    var puntos_cpu = 0;
    var puntos_player = 0;
    var inicio = false;
+
+   var nivel1 = document.getElementById('nivel1');
+   var nivel2 = document.getElementById('nivel2');
+   var nivel3 = document.getElementById('nivel3');
+   console.log('step Pelota');
+
+   //-- Cambiar las velocidades de la bola según el nivel del juego
+   nivel1.onclick = () =>{
+      console.log('1');
+      stepX = 0.2;
+      stepY = 0.2;
+    }
+    nivel2.onclick = () =>{
+      console.log('2');
+      stepX = 0.3;
+      stepY = 0.3;
+    }
+    nivel3.onclick = () =>{
+      console.log('3');
+      stepX = 0.5;
+      stepY = 0.5;
+    }
 
    function init() {
       var scene = new THREE.Scene();
@@ -56,6 +99,8 @@
 
       var border = [ leftBorder, rightBorder, cpu, player ];
 
+      // document.addEventListener( 'mousedown', stepPelota, false );
+      stepPelota();
       animate(pelota, border, renderer, scene, camera);
 
    }
@@ -104,19 +149,38 @@
        }
    }
 
+   function stepPelota(){
+     console.log('step Pelota');
+
+     //-- Cambiar las velocidades de la bola según el nivel del juego
+     document.getElementById('nivel1').onclick = () => {
+        console.log('1');
+        stepX = 0.15;
+        stepY = 0.15;
+      }
+      document.getElementById('nivel2').onclick = () => {
+        console.log('2');
+        stepX = 0.25;
+        stepY = 0.25;
+      }
+      document.getElementById('nivel3').onclick = () => {
+        console.log('3');
+        stepX = 0.5;
+        stepY = 0.5;
+      }
+   }
+
    function move_jugador(player){
      document.onkeydown = function(ev) {
         switch (ev.keyCode) {
          // left
          case 37:
            console.log('left!');
-           inicio = true;
            player.position.x -= stepX;
            break;
          // Right
          case 39:
            console.log('Right!');
-           inicio = true;
            player.position.x += stepX;
            break;
          default:
@@ -235,6 +299,11 @@
   <h3>MOVIMIENTOS:</h3>
   <p>RIGHT -- </p>
   <p>LEFT  -- </p><br>
+  <h3>NIVELES:</h3>
+  <p>Elegir un nivel de juego antes de empezar a jugar.</p>
+  <button type="button" id="nivel1">Fácil</button>
+  <button type="button" id="nivel2">Medio</button>
+  <button type="button" id="nivel3">Difícil</button><br><br>
   <span>cpu:</span>
   <span>player:</span>
 </body>
