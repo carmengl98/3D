@@ -1,8 +1,8 @@
 <!--
-- Funcionalidad básica
 - Funcionalidad avanzada (ángulo de rebote variable, velocidad de desplazamiento vertical variable, posibilidad de ganar a la CPU
+
 - Mejoras:
-Introducir niveles de dificultad. Pueden ser configurable al iniciar el juego o ir
+-Introducir niveles de dificultad. Pueden ser configurable al iniciar el juego o ir
 aumentando según se juego una y otra vez.
 - Marcador con gráfico 3D en lugar de como texto HTML.
 - Posibilidad de elegir diferentes texturas para los elementos de juego (“skin”).
@@ -24,12 +24,17 @@ juego).....
   button{
     width: 140px;
     height: 50px;
-    font-Size:20px;
-    background-color: lightblue;
+    font-Size:15px;
+    background-color: #414245;
     border-color: white;
     border-radius: 40px;
     margin-right: 90px;
+    color: white;
     font-style: italic;
+  }
+  img{
+    width: 50px;
+    height: 50px;
   }
 </style>
 
@@ -40,28 +45,6 @@ juego).....
    var puntos_cpu = 0;
    var puntos_player = 0;
    var inicio = false;
-
-   var nivel1 = document.getElementById('nivel1');
-   var nivel2 = document.getElementById('nivel2');
-   var nivel3 = document.getElementById('nivel3');
-   console.log('step Pelota');
-
-   //-- Cambiar las velocidades de la bola según el nivel del juego
-   nivel1.onclick = () =>{
-      console.log('1');
-      stepX = 0.2;
-      stepY = 0.2;
-    }
-    nivel2.onclick = () =>{
-      console.log('2');
-      stepX = 0.3;
-      stepY = 0.3;
-    }
-    nivel3.onclick = () =>{
-      console.log('3');
-      stepX = 0.5;
-      stepY = 0.5;
-    }
 
    function init() {
       var scene = new THREE.Scene();
@@ -80,13 +63,14 @@ juego).....
       renderer.setSize(sceneWidth, sceneHeight);
       document.body.appendChild(renderer.domElement);
 
-      var light = getLight();
+      var light = getLight(scene);
       var leftBorder = getBorder("left", 1, 20, 2, -5, 0, 0);
       var rightBorder = getBorder("right", 1, 20, 2, 5, 0, 0);
       var cpu = getBorder("cpu", 3, 1, 2, 0, 10, 0);
       var player = getBorder("player", 3, 1, 2, 0, -10, 0);
       var pelota = getPelota();
       var floor = getFloor();
+      var text = getText();
 
       //añado a la escena
       scene.add(light);
@@ -96,10 +80,10 @@ juego).....
       scene.add(player);
       scene.add(pelota);
       scene.add(floor);
+      scene.add(text);
 
       var border = [ leftBorder, rightBorder, cpu, player ];
 
-      // document.addEventListener( 'mousedown', stepPelota, false );
       stepPelota();
       animate(pelota, border, renderer, scene, camera);
 
@@ -108,24 +92,40 @@ juego).....
    function animate(pelota, border, renderer, scene, camera) {
       checkCollision(pelota, border);
 
-      empezar(pelota);
+      cpu = border[2];
+      player = border[3];
+
       if (inicio){
-        pelota.position.x += stepX;
-        pelota.position.y += stepY;
-        move_jugador(border[3]);
-        move_cpu(border[2]);
+          pelota.position.x += stepX;
+          pelota.position.y += stepY;
+          //move_cpu(border);     veeeeeeeeeeeer dificultad
+          cpu.position.x = pelota.position.x;
       }
 
-       if (puntos_player == 5 || puntos_cpu == 5){
-         console.log("he ganado");
-         inicio = false;
-         puntos_player = 0;
-         puntos_cpu = 0;
-         document.body.removeChild(renderer.domElement);
-         //init();
+      document.onkeydown = function(ev) {
+         switch (ev.keyCode) {
+          // left
+          case 37:
+            console.log('left!');
+            player.position.x -= 0.3;
+            break;
+          // Right
+          case 39:
+            console.log('Right!');
+            player.position.x += 0.3;
+            break;
+          //Space
+          case 32:
+            inicio = true;
+            reinicio(pelota);
+            break;
 
-       }
+          default:
+             break;
+         }
+      }
 
+      getMarcador(pelota, border);
       renderer.render(scene, camera);
 
       requestAnimationFrame(function() {
@@ -133,74 +133,76 @@ juego).....
       });
    }
 
-   function empezar(pelota){
-     console.log(inicio);
-     window.onkeydown = (e) => {
-       switch (e.key) {
-          // Space
-          case ' ':
-            inicio = true;
-            pelota.position.x = 0;
-            pelota.position.y = 0;
-            break;
-          default:
-             break;
-         }
-       }
+   function reinicio(pelota){
+     pelota.position.x = 0;
+     pelota.position.y = 0;
    }
 
    function stepPelota(){
-     console.log('step Pelota');
-
      //-- Cambiar las velocidades de la bola según el nivel del juego
      document.getElementById('nivel1').onclick = () => {
-        console.log('1');
+        console.log('N1');
         stepX = 0.15;
         stepY = 0.15;
       }
       document.getElementById('nivel2').onclick = () => {
-        console.log('2');
+        console.log('N2');
         stepX = 0.25;
         stepY = 0.25;
       }
       document.getElementById('nivel3').onclick = () => {
-        console.log('3');
+        console.log('N3');
         stepX = 0.5;
         stepY = 0.5;
       }
    }
 
-   function move_jugador(player){
-     document.onkeydown = function(ev) {
-        switch (ev.keyCode) {
-         // left
-         case 37:
-           console.log('left!');
-           player.position.x -= stepX;
-           break;
-         // Right
-         case 39:
-           console.log('Right!');
-           player.position.x += stepX;
-           break;
-         default:
-            break;
-        }
-      }
+   function move_cpu(border){
+     left = border[0];
+     right = border[1];
+     cpu = border[2];
+
+     cpu.position.x += 0.01;
+     console.log(cpu.position.x);
+     if (cpu.position.x >= 5){
+       console.log('holaaa');
+       cpu.position.x += 0.01 * -1;
+     }else if (cpu.position.x <= left.position.x){
+       cpu.position.x += -0.01;
+       console.log('holaaa1');
+     }else{
+       console.log('holaaa2');
+       cpu.position.x += 0.01;
+     }
+
    }
 
-   function move_cpu(cpu){
-     cpu.position.x += Math.abs(stepX*0.65);
-     if (cpu.position.x < -7){
-      cpu.position.x += stepX;
-    }else if (cpu.position.x > 7){
-      cpu.position.x += -stepX;
-    }
+   function getText(){
+    var loader = new THREE.FontLoader();
+
+   loader.load( 'fonts/helvetiker_regular.typeface.json', function (font) {
+     var geometry = new THREE.TextGeometry( 'Hello three.js!', {
+        font: font,
+        size: 40,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: false,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5
+      } );
+     var material = new THREE.MeshNormalMaterial();
+     var mesh = new THREE.Mesh(geometry, material);
+     mesh.position.y = 30;
+     return mesh;
+     } );
+
    }
 
-   function getLight() {
+   function getLight(scene) {
       var light = new THREE.DirectionalLight();
-      light.position.set(5, 5, 5);
+      light.position.set(10, 0, 10);
       light.castShadow = true;
       light.shadow.camera.near = -10;
       light.shadow.camera.far = 20;
@@ -210,13 +212,15 @@ juego).....
       light.shadow.camera.bottom = -15;
       light.shadow.mapSize.width = 4096;
       light.shadow.mapSize.height = 4096;
+      var helper = new THREE.CameraHelper(light.shadow.camera);
+      scene.add(helper);
       return light;
    }
 
    function getPelota() {
       var geometry = new THREE.SphereGeometry(1, 20, 20);
       var material = new THREE.MeshNormalMaterial();
-      var mesh = new THREE.Mesh(geometry, material);
+      var mesh = new THREE.Mesh(geometry, getMaterial("texturas/earth.png"));
       mesh.position.z = 1;
       mesh.castShadow = true;
 
@@ -225,7 +229,22 @@ juego).....
 
    function getFloor() {
       var geometry = new THREE.PlaneGeometry(10, 20);
-      var mesh = new THREE.Mesh(geometry, getMaterial("f1.jpg"));
+      var campo = "texturas/table.jpg";
+      document.getElementById('padel').onclick = () => {
+         console.log('padel');
+
+         campo ="texturas/table.jpg";
+       }
+       document.getElementById('tenis').onclick = () => {
+         console.log('tenis');
+         campo = "texturas/tennis.jpg";
+       }
+       document.getElementById('volley').onclick = () => {
+         console.log('volley');
+         campo = "texturas/volleyball.jpg";
+
+       }
+      var mesh = new THREE.Mesh(geometry, getMaterial(campo));
       mesh.receiveShadow = true;
 
       return mesh;
@@ -234,9 +253,9 @@ juego).....
    function getBorder(name, x, y, z, posX, posY, posZ) {
       var geometry = new THREE.BoxGeometry(x, y, z);
       if (name == 'cpu'|| name == 'player'){
-        var mesh = new THREE.Mesh(geometry, getMaterial("paleta.jpg"));
+        var mesh = new THREE.Mesh(geometry, getMaterial("texturas/paleta.jpg"));
       }else {
-        var mesh = new THREE.Mesh(geometry, getMaterial("wood.png"));
+        var mesh = new THREE.Mesh(geometry, getMaterial("texturas/wood.png"));
       }
       mesh.receiveShadow = true;
       mesh.position.set(posX, posY, posZ);
@@ -246,8 +265,9 @@ juego).....
    }
 
    function getMaterial(typeTexture) {
-      var texture = new THREE.TextureLoader().load(typeTexture);
-      var Material = new THREE.MeshPhysicalMaterial({
+      var texture = new THREE.ImageUtils.loadTexture(typeTexture);
+      texture.needsUpdate = true;
+      var Material = new THREE.MeshLambertMaterial({
       map : texture,
       });
 
@@ -276,13 +296,40 @@ juego).....
             }
             if (collisionResults[0].object.name == "player" || collisionResults[0].object.name == "cpu") {
                stepY *= -1;
-            }else{
-              console.log("Tanto!!!!", puntos_player);//como hagoooo???
-              puntos_player += 1;
             }
+
             break;
          }
       }
+   }
+
+   function getMarcador(pelota, border){
+     if (pelota.position.y >= border[2].position.y){
+       puntos_cpu += 1;
+       console.log("tantooo 2 !!!!");
+       inicio = false;
+       reinicio(pelota);
+
+     }else if (pelota.position.y <= border[3].position.y){
+       puntos_player += 1;
+       console.log("tantooo 3 !!!!");
+       inicio = false;
+       reinicio(pelota);
+     }
+     document.getElementById("puntos").innerHTML = ("CPU: " + puntos_cpu + ' - ' +"USER: " + puntos_player);
+     if (puntos_player == 3 || puntos_cpu == 3){
+       if (puntos_player > puntos_cpu){
+         console.log("Ha ganado el USER!!!");
+       }else{
+         console.log("Ha ganado la CPU!!!");
+       }
+       inicio = false;
+       puntos_player = 0;
+       puntos_cpu = 0;
+       //document.body.removeChild(renderer.domElement); //// no va muy bien????????????
+       //init();
+     }
+
    }
 
 </script>
@@ -297,15 +344,19 @@ juego).....
      adversario falla al devolver la pelota. En este juego el jugador controla una
      paleta y competirá contra un oponente controlado por computadora.</p>
   <h3>MOVIMIENTOS:</h3>
-  <p>RIGHT -- </p>
-  <p>LEFT  -- </p><br>
+  <img src="texturas/derecha.png" alt="."><br>
+  <img src="texturas/izquierda.png" alt="."><br>
+  <h3>CAMPOS DEL JUEGO:</h3>
+  <p>Elegir un campo de juego antes de empezar a jugar.</p>
+  <button type="button" id="padel">Padel</button>
+  <button type="button" id="tenis">Tenis</button>
+  <button type="button" id="volley">volley</button><br><br>
   <h3>NIVELES:</h3>
   <p>Elegir un nivel de juego antes de empezar a jugar.</p>
   <button type="button" id="nivel1">Fácil</button>
   <button type="button" id="nivel2">Medio</button>
   <button type="button" id="nivel3">Difícil</button><br><br>
-  <span>cpu:</span>
-  <span>player:</span>
+  <p id="puntos"></p>
 </body>
 
 </html>
