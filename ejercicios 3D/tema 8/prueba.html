@@ -37,6 +37,8 @@
    var puntos_player = 0;
    var velocidad = 1;
    var inicio = false;
+   var posCpu;
+   var posPlayer;
 
    function init() {
       var scene = new THREE.Scene();
@@ -94,6 +96,7 @@
           //Space
           case 32:
             inicio = true;
+            velocidad = 1;
             var getPoints = scene.getObjectByName("points");
             if (getPoints){
               scene.remove(getPoints);
@@ -302,16 +305,16 @@
 
             if (collisionResults[0].object.name == "player"){
               stepY *= -1;
-              var posCpu = pala_cpu.position.x;
-              var desplazamiento = Math.abs(posPlayer - pala_jugador.position.x);
-              console.log(posCpu,'cpu ahoraaa');
+              posCpu = pala_cpu.position.x;
+              var desplazamiento = Math.abs(pala_jugador.position.x - posPlayer);
+              console.log(posCpu,'cpu ahora');
               console.log(posPlayer, 'player anterior');
-              console.log(pala_jugador.position.x,'cpu pos ahoraaa');
+              console.log(pala_jugador.position.x,'player pos ahoraaa');
               console.log(desplazamiento, 'posPlayer - pala_jugador.position.x');
 
               if(desplazamiento <= 2){
-                desplazamiento = desplazamiento + 0.8;
-                velocidad = Math.min(desplazamiento , 1.5);
+                desplazamiento = desplazamiento;
+                velocidad = 0.75;
                 console.log(velocidad, 'velocidaad <');
               }else if (desplazamiento >= 2){
                 velocidad = Math.min(desplazamiento , 1.5);
@@ -324,16 +327,16 @@
 
             }else if (collisionResults[0].object.name == "cpu") {
               stepY *= -1;
-              var posPlayer = pala_jugador.position.x;
-              var desplazamiento = Math.abs(posCpu - pala_cpu.position.x);
+              posPlayer = pala_jugador.position.x;
+              var desplazamiento = Math.abs(pala_cpu.position.x - posCpu);
               console.log(posCpu,'cpu anterior');
               console.log(posPlayer, 'player ahoraa');
               console.log(pala_cpu.position.x,'cpu pos ahoraaa');
               console.log(desplazamiento, 'posCpu - pala_cpu.position.x');
 
               if(desplazamiento <= 2){
-                desplazamiento = desplazamiento + 0.8;
-                velocidad = Math.min(desplazamiento , 1.5);
+                desplazamiento = desplazamiento;
+                velocidad = 0.75;
                 console.log(velocidad, 'velocidaad <');
               }else if (desplazamiento >= 2){
                 velocidad = Math.min(desplazamiento , 1.5);
