@@ -1,14 +1,6 @@
-<!--
-- Funcionalidad avanzada (ángulo de rebote variable, velocidad de desplazamiento vertical variable, posibilidad de ganar a la CPU
 
-- Mejoras:
--Introducir niveles de dificultad. Pueden ser configurable al iniciar el juego o ir
-aumentando según se juego una y otra vez.
-- Marcador con gráfico 3D en lugar de como texto HTML.
-- Posibilidad de elegir diferentes texturas para los elementos de juego (“skin”).
-- Animaciones adicionales (movimiento de la cámara o punto de luz en función del
-juego).....
--->
+<!-- - Funcionalidad avanzada (ángulo de rebote variable, velocidad de desplazamiento vertical variable, posibilidad de ganar a la CPU -->
+
 <!DOCTYPE html>
 <html>
 
@@ -23,7 +15,7 @@ juego).....
   }
   button{
     width: 140px;
-    height: 50px;
+    height: 40px;
     font-Size:15px;
     background-color: #414245;
     border-color: white;
@@ -39,13 +31,12 @@ juego).....
 </style>
 
 <script>
-   var renderer;
    var stepX = 0;
    var stepY = 0;
    var puntos_cpu = 0;
    var puntos_player = 0;
+   var velocidad = 1;
    var inicio = false;
-   var marcador =("CPU: " + puntos_cpu + ' - ' +"USER: " + puntos_player);
 
    function init() {
       var scene = new THREE.Scene();
@@ -56,7 +47,7 @@ juego).....
       camera.position.set(0, -15, 15);
       camera.lookAt(scene.position);
 
-      renderer = new THREE.WebGLRenderer({
+      var renderer = new THREE.WebGLRenderer({
          antialias : true
       });
 
@@ -71,7 +62,6 @@ juego).....
       var player = getBorder("player", 3, 1, 2, 0, -10, 0);
       var pelota = getPelota();
       var floor = getFloor();
-      var text = getText(scene);
 
       //añado a la escena
       scene.add(light);
@@ -86,8 +76,41 @@ juego).....
       //ejex-- rojo   ejey-- verde  ejez-- azul
 
       var border = [ leftBorder, rightBorder, cpu, player ];
-
       stepPelota();
+      getText("points", scene);
+
+      document.onkeydown = function(ev) {
+         switch (ev.keyCode) {
+          // left
+          case 37:
+            player.position.x -= 0.35;
+            console.log(player.position.x);
+            break;
+          // Right
+          case 39:
+            player.position.x += 0.35;
+            console.log(player.position.x);
+            break;
+          //Space
+          case 32:
+            inicio = true;
+            var getPoints = scene.getObjectByName("points");
+            if (getPoints){
+              scene.remove(getPoints);
+            }
+
+            var winner = scene.getObjectByName("winner");
+            if (winner){
+              console.log('ufkuyfvukv');
+              scene.remove(winner);
+            }
+            reinicio(pelota);
+            break;
+          default:
+            break;
+         }
+      }
+
       animate(pelota, border, renderer, scene, camera);
 
    }
@@ -97,43 +120,12 @@ juego).....
 
       cpu = border[2];
       player = border[3];
-
       if (inicio){
-          pelota.position.x += stepX;
-          pelota.position.y += stepY;
+          pelota.position.x += stepX * velocidad;
+          pelota.position.y += stepY * velocidad;
           move_cpu(pelota, border);
       }
-
-      document.onkeydown = function(ev) {
-         switch (ev.keyCode) {
-          // left
-          case 37:
-            console.log('left!');
-            player.position.x -= 0.3;
-            console.log(player.position.x);
-            break;
-          // Right
-          case 39:
-            console.log('Right!');
-            player.position.x += 0.3;
-            console.log(player.position.x);
-            break;
-          //Space
-          case 32:
-            inicio = true;
-            if (puntos_cpu == 3 || puntos_player == 3){
-              puntos_player = 0;
-              puntos_cpu = 0;
-            }
-            reinicio(pelota);
-            break;
-
-          default:
-             break;
-         }
-      }
-
-      getMarcador(pelota, border);
+      getMarcador(pelota, border, scene);
       renderer.render(scene, camera);
 
       requestAnimationFrame(function() {
@@ -149,37 +141,35 @@ juego).....
    function stepPelota(){
      //-- Cambiar las velocidades de la bola según el nivel del juego
      document.getElementById('nivel1').onclick = () => {
-        console.log('N1');
-        stepX = 0.15;
-        stepY = 0.15;
+        stepX = 0.12;
+        stepY = 0.12;
       }
       document.getElementById('nivel2').onclick = () => {
-        console.log('N2');
-        stepX = 0.25;
-        stepY = 0.25;
+        stepX = 0.18;
+        stepY = 0.18;
       }
       document.getElementById('nivel3').onclick = () => {
-        console.log('N3');
-        stepX = 0.5;
-        stepY = 0.5;
+        stepX = 0.22;
+        stepY = 0.22;
       }
    }
 
    function move_cpu(pelota, border){
-     cpu = border[2];
-
-     cpu.position.x = pelota.position.x;
+    cpu = border[2];
+     // cpu.position.x = (pelota.position.x - Math.abs());
      //cpu.position.x += Math.random()-0.1;
 
-     console.log(cpu.position.x);
+    cpu.position.x = (pelota.position.x)*1.25 ;
+    //console.log(cpu.position.x);
 
    }
 
-   function getText(scene){
-   var loader = new THREE.FontLoader();
+   function getText(name, scene){
+     var loader = new THREE.FontLoader();
+     marcador =("CPU: " + puntos_cpu + ' - ' +"USER: " + puntos_player);
 
-   loader.load( 'fonts/helvetiker_regular.typeface.json', function (font) {
-     var geometry = new THREE.TextGeometry( marcador, {
+     loader.load( 'fonts/helvetiker_regular.typeface.json', function (font) {
+     var geometry = new THREE.TextGeometry(marcador , {
         font: font,
         size: 2,
         height: 0.5,
@@ -192,9 +182,36 @@ juego).....
       } );
      var material = new THREE.MeshNormalMaterial();
      var mesh = new THREE.Mesh(geometry, material);
-     mesh.position.y = 30;
+     mesh.position.y = 35;
      mesh.position.x =-10;
      mesh.rotation.x = 1;
+     mesh.name = name;
+     scene.add(mesh);
+     } );
+
+   }
+
+   function getWinner(name, winnerText, scene){
+     var loader = new THREE.FontLoader();
+
+     loader.load( 'fonts/helvetiker_regular.typeface.json', function (font) {
+     var geometry = new THREE.TextGeometry(winnerText , {
+        font: font,
+        size: 3,
+        height: 0.5,
+        curveSegments: 12,
+        bevelEnabled: false,
+        bevelThickness: 2,
+        bevelSize: 0.1,
+        bevelOffset: 0.1,
+        bevelSegments: 0.1
+      } );
+     var material = new THREE.MeshNormalMaterial();
+     var mesh = new THREE.Mesh(geometry, material);
+     mesh.position.y = 55;
+     mesh.position.x =-20;
+     mesh.rotation.x = 1;
+     mesh.name = name;
      scene.add(mesh);
      } );
 
@@ -222,6 +239,7 @@ juego).....
       var material = new THREE.MeshNormalMaterial();
       var mesh = new THREE.Mesh(geometry, getMaterial("texturas/earth.png"));
       mesh.position.z = 1;
+      mesh.name = "pelota";
       mesh.castShadow = true;
 
       return mesh;
@@ -281,28 +299,55 @@ juego).....
             if (collisionResults[0].object.name == "left" || collisionResults[0].object.name == "right") {
                stepX *= -1;
             }
-            if (collisionResults[0].object.name == "player"){
-               if (rightSide.position.x - pala_jugador.position.x  <= 9 ){
-                 console.log('diferencia 1!!', rightSide.position.x - pala_jugador.position.x );
-                 pelota.position.x += stepX;
-                 console.log('posicion y',pelota.position.y);
-                  console.log('posicion x',pelota.position.x);
 
-               }else{
-                 console.log('no diferencia 1!!', rightSide.position.x - pala_jugador.position.x );
-                 pelota.position.x -= stepX;
-                 console.log('posicion y',pelota.position.y);
-                  console.log('posicion x',pelota.position.x);
-               }
-               if (leftSide.position.x - pala_jugador.position.x  <= -9 ){
-                 console.log('diferencia 2!!', leftSide.position.x - pala_jugador.position.x );
-               }else{
-                 console.log('no diferencia 2!!', leftSide.position.x - pala_jugador.position.x );
-               }
+            if (collisionResults[0].object.name == "player"){
               stepY *= -1;
+              var posCpu = pala_cpu.position.x;
+              var desplazamiento = Math.abs(posPlayer - pala_jugador.position.x);
+              console.log(posCpu,'cpu ahoraaa');
+              console.log(posPlayer, 'player anterior');
+              console.log(pala_jugador.position.x,'cpu pos ahoraaa');
+              console.log(desplazamiento, 'posPlayer - pala_jugador.position.x');
+
+              if(desplazamiento <= 2){
+                desplazamiento = desplazamiento + 0.8;
+                velocidad = Math.min(desplazamiento , 1.5);
+                console.log(velocidad, 'velocidaad <');
+              }else if (desplazamiento >= 2){
+                velocidad = Math.min(desplazamiento , 1.5);
+                console.log(velocidad, 'velocidaad >');
+              }
+            //console.log(collisionResults[0].object.position,' posPlayer');
+            //if (collisionResults[0].object.position.x >= 2.8 ){
+            //  pelota.position.y += 5;
+            //}
 
             }else if (collisionResults[0].object.name == "cpu") {
-               stepY *= -1;
+              stepY *= -1;
+              var posPlayer = pala_jugador.position.x;
+              var desplazamiento = Math.abs(posCpu - pala_cpu.position.x);
+              console.log(posCpu,'cpu anterior');
+              console.log(posPlayer, 'player ahoraa');
+              console.log(pala_cpu.position.x,'cpu pos ahoraaa');
+              console.log(desplazamiento, 'posCpu - pala_cpu.position.x');
+
+              if(desplazamiento <= 2){
+                desplazamiento = desplazamiento + 0.8;
+                velocidad = Math.min(desplazamiento , 1.5);
+                console.log(velocidad, 'velocidaad <');
+              }else if (desplazamiento >= 2){
+                velocidad = Math.min(desplazamiento , 1.5);
+                console.log(velocidad, 'velocidaad >');
+              }
+            //   console.log(collisionResults[0].object.position,' posCpu');
+            //   if (collisionResults[0].object.position.x >= 2.8 ){
+            //     console.log('diferencia 1!!', rightSide.position.x - pala_cpu.position.x );
+            //     pelota.position.y -= 5;
+            //   }//else{
+            //   //   console.log('diferencia 2!!', leftSide.position.x - pala_cpu.position.x );
+            //   //    pelota.position.y -= 5;
+            //   // }
+
             }
 
             break;
@@ -310,25 +355,36 @@ juego).....
       }
    }
 
-   function getMarcador(pelota, border){
+   function getMarcador(pelota, border, scene){
      if (pelota.position.y >= border[2].position.y){
-       puntos_cpu += 1;
-       inicio = false;
-       reinicio(pelota);
-
-     }else if (pelota.position.y <= border[3].position.y){
        puntos_player += 1;
        inicio = false;
        reinicio(pelota);
+       getText("points", scene);
+
+     }else if (pelota.position.y <= border[3].position.y){
+       puntos_cpu += 1;
+       inicio = false;
+       reinicio(pelota);
+       getText("points", scene);
+
      }
-     document.getElementById("puntos").innerHTML = ("CPU: " + puntos_cpu + ' - ' +"USER: " + puntos_player);
+
      if (puntos_player == 3 || puntos_cpu == 3){
        if (puntos_player > puntos_cpu){
          console.log("Ha ganado el USER!!!");
+         winnerText =("ENHORABUENA USER!!!");
+         getWinner("winner", winnerText, scene);
        }else{
          console.log("Ha ganado la CPU!!!");
+         winnerText =("ENHORABUENA CPU!!!");
+         getWinner("winner", winnerText, scene);
+
        }
        inicio = false;
+       puntos_cpu = 0;
+       puntos_player = 0;
+       reinicio(pelota);
      }
 
    }
@@ -344,6 +400,7 @@ juego).....
      oponente; este será el GANADOR. Estos puntos se obtienen cuando el jugador
      adversario falla al devolver la pelota. En este juego el jugador controla una
      paleta y competirá contra un oponente controlado por computadora.</p>
+  <p>NOTA: Para empezar el juego o volver a jugar pulse la barra ESPACIADORA.</p>
   <h3>MOVIMIENTOS:</h3>
   <img src="texturas/derecha.png" alt="."><br>
   <img src="texturas/izquierda.png" alt="."><br>
@@ -352,7 +409,6 @@ juego).....
   <button type="button" id="nivel1">Fácil</button>
   <button type="button" id="nivel2">Medio</button>
   <button type="button" id="nivel3">Difícil</button><br><br>
-  <p id="puntos"></p>
 </body>
 
 </html>
