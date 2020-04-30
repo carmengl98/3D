@@ -96,6 +96,7 @@
           case 32:
             inicio = true;
             velocidad = 1;
+            failCpu = 1;
             var getPoints = scene.getObjectByName("points");
             if (getPoints){
               scene.remove(getPoints);
@@ -158,7 +159,8 @@
 
    function move_cpu(pelota, border){
     cpu = border[2];
-    cpu.position.x = pelota.position.x;
+    console.log(failCpu, 'failcpu move');
+    cpu.position.x = pelota.position.x * failCpu;
 
    }
 
@@ -277,6 +279,10 @@
       return Material;
    }
 
+   function getRandomArbitrary(min, max) {
+     return Math.random() * (max - min) + min;
+   }
+
    function checkCollision(pelota, border) {
       var originPosition = pelota.position.clone();
       var leftSide = border[0];
@@ -309,10 +315,9 @@
                 velocidad = 1.5;
                 console.log(velocidad, 'velocidaad >');
               }
-              function getRandomArbitrary(min, max) {
-                return Math.random() * (max - min) + min;
-              }
 
+              failCpu = getRandomArbitrary(1.5, 2.25);
+              console.log(failCpu, 'fail cpu');
 
             }else if (collisionResults[0].object.name == "cpu") {
               stepY *= -1;
