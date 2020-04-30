@@ -1,6 +1,4 @@
 
-<!-- - Funcionalidad avanzada (ángulo de rebote variable, velocidad de desplazamiento vertical variable, posibilidad de ganar a la CPU -->
-
 <!DOCTYPE html>
 <html>
 
@@ -39,6 +37,7 @@
    var inicio = false;
    var posCpu;
    var posPlayer;
+   var failCpu = 1;
 
    function init() {
       var scene = new THREE.Scene();
@@ -57,7 +56,7 @@
       renderer.setSize(sceneWidth, sceneHeight);
       document.body.appendChild(renderer.domElement);
 
-      var light = getLight(scene);
+      var light = getLight();
       var leftBorder = getBorder("left", 1, 20, 2, -5, 0, 0);
       var rightBorder = getBorder("right", 1, 20, 2, 5, 0, 0);
       var cpu = getBorder("cpu", 3, 1, 2, 0, 10, 0);
@@ -124,8 +123,8 @@
       cpu = border[2];
       player = border[3];
       if (inicio){
-          pelota.position.x += stepX * velocidad;
-          pelota.position.y += stepY * velocidad;
+          pelota.position.x += (stepX * velocidad);
+          pelota.position.y += (stepY * velocidad);
           move_cpu(pelota, border);
       }
       getMarcador(pelota, border, scene);
@@ -159,11 +158,7 @@
 
    function move_cpu(pelota, border){
     cpu = border[2];
-     // cpu.position.x = (pelota.position.x - Math.abs());
-     //cpu.position.x += Math.random()-0.1;
-
-    cpu.position.x = (pelota.position.x)*1.25 ;
-    //console.log(cpu.position.x);
+    cpu.position.x = pelota.position.x;
 
    }
 
@@ -220,7 +215,7 @@
 
    }
 
-   function getLight(scene) {
+   function getLight() {
       var light = new THREE.DirectionalLight();
       light.position.set(10, 0, 10);
       light.castShadow = true;
@@ -232,8 +227,6 @@
       light.shadow.camera.bottom = -15;
       light.shadow.mapSize.width = 4096;
       light.shadow.mapSize.height = 4096;
-      var helper = new THREE.CameraHelper(light.shadow.camera);
-      scene.add(helper);
       return light;
    }
 
@@ -307,49 +300,37 @@
               stepY *= -1;
               posCpu = pala_cpu.position.x;
               var desplazamiento = Math.abs(pala_jugador.position.x - posPlayer);
-              console.log(posCpu,'cpu ahora');
-              console.log(posPlayer, 'player anterior');
-              console.log(pala_jugador.position.x,'player pos ahoraaa');
-              console.log(desplazamiento, 'posPlayer - pala_jugador.position.x');
+              console.log(desplazamiento, 'desplazamiento');
 
-              if(desplazamiento <= 2){
-                desplazamiento = desplazamiento;
-                velocidad = 0.75;
+              if(desplazamiento <= 2.5){
+                velocidad = 0.8;
                 console.log(velocidad, 'velocidaad <');
-              }else if (desplazamiento >= 2){
-                velocidad = Math.min(desplazamiento , 1.5);
+              }else if (desplazamiento >= 2.5){
+                velocidad = 1.5;
                 console.log(velocidad, 'velocidaad >');
               }
-            //console.log(collisionResults[0].object.position,' posPlayer');
-            //if (collisionResults[0].object.position.x >= 2.8 ){
-            //  pelota.position.y += 5;
-            //}
+              function getRandomArbitrary(min, max) {
+                return Math.random() * (max - min) + min;
+              }
+
 
             }else if (collisionResults[0].object.name == "cpu") {
               stepY *= -1;
               posPlayer = pala_jugador.position.x;
-              var desplazamiento = Math.abs(pala_cpu.position.x - posCpu);
-              console.log(posCpu,'cpu anterior');
-              console.log(posPlayer, 'player ahoraa');
-              console.log(pala_cpu.position.x,'cpu pos ahoraaa');
-              console.log(desplazamiento, 'posCpu - pala_cpu.position.x');
+              if (posCpu == undefined){
+                var desplazamiento = 1;
+              }else{
+                var desplazamiento = Math.abs(pala_cpu.position.x - posCpu);
+              }
+              console.log(desplazamiento, 'desplazamiento');
 
-              if(desplazamiento <= 2){
-                desplazamiento = desplazamiento;
-                velocidad = 0.75;
+              if(desplazamiento <= 2.5){
+                velocidad = 0.8;
                 console.log(velocidad, 'velocidaad <');
-              }else if (desplazamiento >= 2){
-                velocidad = Math.min(desplazamiento , 1.5);
+              }else if (desplazamiento >= 2.5){
+                velocidad = 1.5;
                 console.log(velocidad, 'velocidaad >');
               }
-            //   console.log(collisionResults[0].object.position,' posCpu');
-            //   if (collisionResults[0].object.position.x >= 2.8 ){
-            //     console.log('diferencia 1!!', rightSide.position.x - pala_cpu.position.x );
-            //     pelota.position.y -= 5;
-            //   }//else{
-            //   //   console.log('diferencia 2!!', leftSide.position.x - pala_cpu.position.x );
-            //   //    pelota.position.y -= 5;
-            //   // }
 
             }
 
