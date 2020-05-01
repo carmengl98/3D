@@ -1,9 +1,15 @@
+<!--
+Partes implementadas:
+- Funcionalidad básica
+- Funcionalidad avanzada (velocidad de desplazamiento vertical variable, posibilidad de ganar a la CPU)
+- Mejoras (Introducir niveles de dificultad, marcador con gráfico 3D en lugar de como texto HTML.)
+-->
 
 <!DOCTYPE html>
 <html>
 
 <head>
-<title>Three.js: Collision detection</title>
+<title>Pong</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.min.js"></script>
 <style>
@@ -164,7 +170,7 @@
      var loader = new THREE.FontLoader();
      marcador =("CPU: " + puntos_cpu + ' - ' +"USER: " + puntos_player);
 
-     loader.load( 'fonts/helvetiker_regular.typeface.json', function (font) {
+     loader.load( 'helvetiker_regular.typeface.json', function (font) {
      var geometry = new THREE.TextGeometry(marcador , {
         font: font,
         size: 2,
@@ -190,7 +196,7 @@
    function getWinner(name, winnerText, scene){
      var loader = new THREE.FontLoader();
 
-     loader.load( 'fonts/helvetiker_regular.typeface.json', function (font) {
+     loader.load( 'helvetiker_regular.typeface.json', function (font) {
      var geometry = new THREE.TextGeometry(winnerText , {
         font: font,
         size: 4,
