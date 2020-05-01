@@ -115,11 +115,11 @@
                    ejy = 0;
                    vector = flecha_down;
                  break;
-                 case 33: // PageUp
-                   eye_camara += step;
-                 break;
-                 case 34: // PageDown
+                 case 33: // PageDown
                    eye_camara -= step;
+                 break;
+                 case 34: // PageUp
+                   eye_camara += step;
                  break;
                }
                initVertexShader(gl);
@@ -308,7 +308,7 @@
     <canvas id="myCanvas" width="640" height="480"></canvas>
     <br>
   <!-- Introducir el valor del step(paso) por pantalla. -->
-    Step: <input type="text" id="step" value="0.01">
+    Step: <input type="text" id="step" value="0.1">
 </body>
 
 </html>
