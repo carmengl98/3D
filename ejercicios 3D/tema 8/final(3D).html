@@ -84,12 +84,10 @@
           // left
           case 37:
             player.position.x -= 0.35;
-            console.log(player.position.x);
             break;
           // Right
           case 39:
             player.position.x += 0.35;
-            console.log(player.position.x);
             break;
           //Space
           case 32:
@@ -151,14 +149,13 @@
         stepY = 0.18;
       }
       document.getElementById('nivel3').onclick = () => {
-        stepX = 0.22;
-        stepY = 0.22;
+        stepX = 0.24;
+        stepY = 0.24;
       }
    }
 
    function move_cpu(pelota, border){
     cpu = border[2];
-    console.log(failCpu, 'failcpu move');
     cpu.position.x = pelota.position.x * failCpu;
 
    }
@@ -244,7 +241,7 @@
 
    function getFloor() {
       var geometry = new THREE.PlaneGeometry(10, 20);
-      var mesh = new THREE.Mesh(geometry, getMaterial("texturas/table.jpg"));
+      var mesh = new THREE.Mesh(geometry, getMaterial("texturas/tennisb.jpg"));
       mesh.receiveShadow = true;
 
       return mesh;
