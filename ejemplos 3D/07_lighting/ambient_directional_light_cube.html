@@ -10,12 +10,12 @@
 
 <script id="shaderVs" type="x-shader/x-vertex">
     attribute vec3 a_Color;
-    attribute vec3 a_Normal;
+    attribute vec3 a_Normal;  //normal
     attribute vec4 a_Position;
 
-    uniform vec3 u_LightColor;
-    uniform vec3 u_LightDirection;
-    uniform vec3 u_AmbientLight;
+    uniform vec3 u_LightColor; //color de la luz
+    uniform vec3 u_LightDirection; //direccion de la luz
+    uniform vec3 u_AmbientLight; //luz ambiente
 
     uniform mat4 u_pMatrix;
     uniform mat4 u_vMatrix;
@@ -26,12 +26,12 @@
     void main(void) {
         gl_Position = u_pMatrix * u_vMatrix * u_mvMatrix * a_Position;
 
-        vec3 normal = normalize(a_Normal);
-        float nDotL = max(dot(u_LightDirection, normal), 0.0);
+        vec3 normal = normalize(a_Normal);  //normalizo la normal
+        float nDotL = max(dot(u_LightDirection, normal), 0.0); //producto escalar de la normal
 
         vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;
-        vec3 ambient = u_AmbientLight * a_Color.rgb;
-        v_Color = vec4(diffuse + ambient, 1.0);
+        vec3 ambient = u_AmbientLight * a_Color.rgb; //luz ambiental
+        v_Color = vec4(diffuse + ambient, 1.0); //pasamos al fragment la luz ambiental y reflexion difusa
     }
 </script>
 
@@ -41,8 +41,6 @@
     void main(void) {
         gl_FragColor = v_Color;
     }
-</script>
-
 </script>
 
 <script>
