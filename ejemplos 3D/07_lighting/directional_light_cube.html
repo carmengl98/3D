@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 <title>Lighting: cube lit by directional light</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
-<scrip<script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
 
 <script id="shaderVs" type="x-shader/x-vertex">
     attribute vec3 a_Color;
@@ -41,11 +38,9 @@
     }
 </script>
 
-</script>
-
 <script>
-
    var count = 0.0;
+
    function init() {
       // Get canvas object from the DOM
       var canvas = document.getElementById("myCanvas");
@@ -73,7 +68,6 @@
 
       // Draw Scene
       drawScene(gl, canvas);
-
    }
 
    function drawScene(gl, canvas) {
@@ -91,32 +85,21 @@
       // Draw
       gl.drawElements(gl.TRIANGLES, 6 * 2 * 3, gl.UNSIGNED_BYTE, 0);
 
-
       // Call drawScene again in the next browser repaint
       count += 0.01;
       requestAnimationFrame(function() {
          drawScene(gl, canvas)
-
       });
-
    }
 
    function initVertexShader(gl) {
-
       //    v6----- v5
-
       //   /|      /|
-
       //  v1------v0|
-
       //  | |     | |
-
       //  | |v7---|-|v4
-
       //  |/      |/
-
       //  v2------v3
-
       var vertices = new Float32Array([ // Coordinates
       0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, // v0-v1-v2-v3 front
       0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, // v0-v3-v4-v5 right
@@ -124,7 +107,6 @@
       -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, // v1-v6-v7-v2 left
       -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, // v7-v4-v3-v2 down
       0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5 // v4-v7-v6-v5 back
-
       ]);
 
       var colors = new Float32Array([ // Colors
@@ -134,7 +116,6 @@
       1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v1-v6-v7-v2 left
       1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, // v7-v4-v3-v2 down
       1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 // v4-v7-v6-v5 back
-
       ]);
 
       var normals = new Float32Array([ // Normal
@@ -144,7 +125,6 @@
       -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, // v1-v6-v7-v2 left
       0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, // v7-v4-v3-v2 down
       0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0 // v4-v7-v6-v5 back
-
       ]);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
@@ -161,7 +141,6 @@
       gl.enableVertexAttribArray(vertexColorAttribute);
       gl.vertexAttribPointer(vertexColorAttribute, 3, gl.FLOAT, false, 0, 0);
 
-
       gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
       gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
 
@@ -176,23 +155,21 @@
       12, 13, 14, 12, 14, 15, // left
       16, 17, 18, 16, 18, 19, // down
       20, 21, 22, 20, 22, 23 // back
-
       ]);
 
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
    }
 
    function initProjection(gl, canvas) {
       // Write u_pMatrix
       var ratio = canvas.width / canvas.height;
-      var pMatrix = mat4.perspective(mat4.create(), 150, ratio, 0.1, 100);
+      var pMatrix = mat4.perspective(mat4.create(), 0.9, ratio, 0.1, 100);
       var pMatrixUniform = gl.getUniformLocation(gl.program, "u_pMatrix");
       gl.uniformMatrix4fv(pMatrixUniform, false, pMatrix);
 
       // Write u_vMatrix
-      var vMatrix = mat4.lookAt(mat4.create(), [ 0, 0, -3 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
+      var vMatrix = mat4.lookAt(mat4.create(), [ 0, 0, 3 ], [ 0, 0, 0 ], [ 0, 1, 0 ]);
       var vMatrixUniform = gl.getUniformLocation(gl.program, "u_vMatrix");
       gl.uniformMatrix4fv(vMatrixUniform, false, vMatrix);
 
@@ -206,13 +183,9 @@
       var y = document.getElementById("y").value;
       var z = document.getElementById("z").value;
       var lightDirection = [ x, y, z ];
-
       vec3.normalize(lightDirection, lightDirection);
-
       var lightDirectionUniform = gl.getUniformLocation(gl.program, "u_LightDirection");
-
       gl.uniform3fv(lightDirectionUniform, lightDirection);
-
    }
 
    function initShaders(gl, vs_source, fs_source) {
@@ -231,7 +204,6 @@
       // Use program
       gl.useProgram(glProgram);
       gl.program = glProgram;
-
    }
 
    function makeShader(gl, src, type) {
@@ -244,17 +216,17 @@
       }
       return shader;
    }
-
 </script>
 
 </head>
 
 <body onload="init()">
     <canvas id="myCanvas" width="640" height="480"></canvas><br>
+
     <b>Light direction</b><br>
     <input type="range" id="x" min="-20" max="20" value="2" step="1">X<br>
-    <input type="range" id="y" min="-20" max="20" value="-8" step="1">Y<br>
-    <input type="range" id="z" min="-20" max="20" value="-8" step="1">Z<br>
+    <input type="range" id="y" min="-20" max="20" value="8" step="1">Y<br>
+    <input type="range" id="z" min="-20" max="20" value="8" step="1">Z<br>
 </body>
 
 </html>

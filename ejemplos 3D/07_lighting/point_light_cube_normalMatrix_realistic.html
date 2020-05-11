@@ -27,7 +27,7 @@
 
         v_lightDirection = normalize(u_lightPosition - vec3(gl_Position));
         v_Normal = u_NormalMatrix * vec4(a_Normal, 1.0);
-
+        
         v_Color = vec4(a_Color, 1.0);
     }
 </script>
@@ -95,7 +95,7 @@
       var uMvMatrix = gl.getUniformLocation(gl.program, "u_mvMatrix");
       gl.uniformMatrix4fv(uMvMatrix, false, mvMatrix);
 
-
+      
       // Get the normal direction using the model Matrix
       var normalMatrix = mat4.clone(mvMatrix);
       var normalMatrixInvert = mat4.invert(mat4.create(), normalMatrix);
@@ -204,7 +204,7 @@
       var x = document.getElementById("x").value;
       var y = document.getElementById("y").value;
       var z = document.getElementById("z").value;
-      
+ 
       var lightPosition = [ x, y, z ];
       var lightPositionUniform = gl.getUniformLocation(gl.program, "u_lightPosition");
       gl.uniform3fv(lightPositionUniform, lightPosition);

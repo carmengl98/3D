@@ -87,7 +87,7 @@
       var uMvMatrix = gl.getUniformLocation(gl.program, "u_mvMatrix");
       gl.uniformMatrix4fv(uMvMatrix, false, mvMatrix);
 
-
+      
       // Get the normal direction using the model Matrix
       var normalMatrix = mat4.clone(mvMatrix);
       var normalMatrixInvert = mat4.invert(mat4.create(), normalMatrix);
@@ -196,7 +196,7 @@
       var x = document.getElementById("x").value;
       var y = document.getElementById("y").value;
       var z = document.getElementById("z").value;
-
+ 
       var lightPosition = [ x, y, z ];
       var lightPositionUniform = gl.getUniformLocation(gl.program, "u_lightPosition");
       gl.uniform3fv(lightPositionUniform, lightPosition);
