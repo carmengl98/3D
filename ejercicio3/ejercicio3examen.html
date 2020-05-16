@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Dibujas puntos de color haciendo click en canvas</title>
+  </head>
+
+  <body onload="init()">
+    <canvas id="myCanvas" width="640" height="480"></canvas><br>
+    <b>Point Color</b>
+    <input type="range" id="r" min="0" max="1" value="0.5" step="0.01">R
+    <input type="range" id="g" min="0" max="1" value="0.5" step="0.01">G
+    <input type="range" id="b" min="0" max="1" value="0.5" step="0.01">B
+  </body>
+
+  <script id="shaderVs" type="x-shader/x-vertex">
+    attribute vec4 a_Position;
+
+    void main() {
+      gl_Position = a_Position;
+    }
+  </script>
+
+  <script id="shaderFs" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform vec4 u_FragColor;
+    void main() {
+      gl_FragColor = u_FragColor;
+    }
+  </script>
+
+  <script>
+
+    function init() {
+      // Get canvas object from the DOM
+      var canvas = document.getElementById("myCanvas");
+
+      // Init WebGL context (indica 3d)
+      var gl = canvas.getContext("webgl");
+      if (!gl) {
+        console.log("Failed to get the rendering context for WebGL");
+        return;
+      }
+
+      // Init shaders
+      var vs = document.getElementById('shaderVs').innerHTML;
+      var fs = document.getElementById('shaderFs').innerHTML;
+      if (!initShaders(gl, vs, fs)) {
+        console.log('Failed to intialize shaders.');
+        return;
+      }
+
+      // Register event handler
+      canvas.onmousedown = function(ev) {
+        click(ev, gl, canvas);
+      };
+
+      // Clear canvas
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+  }
+
+    function initShaders(gl, vs_source, fs_source) {
+      // Compile shaders
+      var vertexShader = makeShader(gl, vs_source, gl.VERTEX_SHADER);
+      var fragmentShader = makeShader(gl, fs_source, gl.FRAGMENT_SHADER);
+
+      // Create program
+      var glProgram = gl.createProgram();
+
+      // Attach and link shaders to the program(añaden y linkan al programa)
+      gl.attachShader(glProgram, vertexShader);
+      gl.attachShader(glProgram, fragmentShader);
+      gl.linkProgram(glProgram);
+      if (!gl.getProgramParameter(glProgram, gl.LINK_STATUS)) {
+        alert("Unable to initialize the shader program");
+        return false;
+      }
+      // Use program
+      gl.useProgram(glProgram);
+      gl.program = glProgram;
+      return true; //indica que la inicialización ha tenido éxito
+    }
+
+    function makeShader(gl, src, type) {
+      //Crear el shader.
+      var shader = gl.createShader(type);
+      // Linkar el shader que hemos creado a la variable JavaScript que contiene
+      //la función.
+      gl.shaderSource(shader, src);
+      // Compilar el shader.
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert("Error compiling shader: " + gl.getShaderInfoLog(shader));
+        return;
+      }
+      return shader;
+    }
+
+    var points = [];
+    var colors = [];
+    function click(ev, gl, canvas) {
+      // Coordinates of canvas origin
+      var rect = ev.target.getBoundingClientRect();
+      // relative x coordinate of click in canvas
+      var clickX = ev.clientX - rect.left;
+      // relative y coordinate of click in canvas
+      var clickY = ev.clientY - rect.top;
+      // WebGL coordinates (3D)
+      var halfCanvasWidth = canvas.width / 2;
+      var halfCanvasHeight = canvas.height / 2;
+      var x = (clickX - halfCanvasWidth) / halfCanvasWidth;
+      var y = (halfCanvasHeight - clickY) / halfCanvasHeight;
+      var xyz = [x, y, 0];
+      // Store the coordinates to g_points array
+      points.push(xyz);
+
+      // Write u_LightDirection (luz direccional)
+      var r = document.getElementById("r").value;
+      var g = document.getElementById("g").value;
+      var b = document.getElementById("b").value;
+      console.log(r,g,b);
+      var color = [r, g, b, 1.0];
+      colors.push(color);
+
+      // Clear <canvas>
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      var vertices = new Float32Array([
+        x+0, y+0.05, 0, // Vertice 1
+        x-0.05, y-0.05, 0, // Vertice 2
+        x+0.05, y-0.05, 0 // Vertice 3
+      ]);
+
+
+      var len = points.length;
+      for(var i = 0; i < len; i++){
+        //pide la posicion
+        var a_Position = gl.getAttribLocation(gl.program, "a_Position");
+        if (a_Position < 0) {
+          console.log('Failed to get the storage location of a_Position');
+          return;
+        }
+        // pide los colores
+        var u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
+        if (u_FragColor < 0) {
+          console.log('Failed to get the storage location of u_FragColor');
+          return;
+        }
+
+        var vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_Position);
+
+
+        // Pass the position of a point to a_Position variable
+        gl.vertexAttrib2fv(a_Position, points[i]);
+        gl.uniform4fv(u_FragColor, colors[i]);
+
+        // Draw
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+    }
+
+  </script>
+</html>
